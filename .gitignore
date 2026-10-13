@@ -10,3 +10,6 @@
 .env
 .env.*
 !.env.example
+
+# Local data: real conversations, caches, databases. Never committed.
+/data/
