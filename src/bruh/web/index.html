@@ -314,6 +314,7 @@ async function loadStats() {
 
 function route() {
   const [tab, id, extra] = (location.hash.replace(/^#\/?/, "") || "ask").split("/");
+  $("#drawer").innerHTML = "";
   document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
   (views[tab] || views.ask)(id, extra);
   window.scrollTo(0, 0);
