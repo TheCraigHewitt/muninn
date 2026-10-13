@@ -1,0 +1,13 @@
+{"checks": [
+  {"kind": "label", "ids": ["L2"], "sincerity": "joking", "why": "sarcasm with 🙃"},
+  {"kind": "label", "ids": ["L3"], "sincerity": "hypothetical", "why": "'what if ... thinking out loud'"},
+  {"kind": "label", "ids": ["L12"], "sincerity": "quoting", "why": "restating a customer"},
+  {"kind": "no_memory_from", "ids": ["L2"], "why": "sarcasm must produce nothing"},
+  {"kind": "no_memory_from", "ids": ["L3"], "why": "hypothetical must produce nothing"},
+  {"kind": "no_memory_from", "ids": ["L4"], "types": ["decision"], "why": "👍 reactions alone never make a decision"},
+  {"kind": "no_memory_from", "ids": ["L12"], "types": ["decision", "commitment"], "why": "a quote is not the org committing"},
+  {"kind": "memory_from", "ids": ["L8"], "types": ["decision"], "why": "explicit commit language after the objection was resolved"},
+  {"kind": "memory_from", "ids": ["L9"], "types": ["rationale"], "why": "states why"},
+  {"kind": "memory_from", "ids": ["L10"], "types": ["commitment"], "why": "Dev undertook a task with a date"},
+  {"kind": "memory_from", "ids": ["L11"], "types": ["question"], "why": "unanswered in the discussion"}
+]}

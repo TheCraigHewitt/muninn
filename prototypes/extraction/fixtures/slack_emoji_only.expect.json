@@ -1,0 +1,7 @@
+{"checks": [
+  {"kind": "no_memory_from", "ids": ["L1", "L2", "L3"], "types": ["decision"], "why": "enthusiasm and emoji are not a commitment"},
+  {"kind": "memory_from", "ids": ["L1"], "types": ["proposal"], "why": "a suggested course of action"},
+  {"kind": "label", "ids": ["L4"], "sincerity": "joking", "why": "'lol ... so nobody is happy'"},
+  {"kind": "no_memory_from", "ids": ["L4"], "why": "joke must produce nothing"},
+  {"kind": "memory_from", "ids": ["L5"], "types": ["fact"], "why": "a stated fact about the org"}
+]}
