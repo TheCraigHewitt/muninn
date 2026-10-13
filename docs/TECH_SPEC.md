@@ -231,13 +231,13 @@ The thresholds are starting values, calibrated in Phase 4.
 
 ## Connectors
 
-- **Slack:** request only the scopes needed for public channels, and never DM or group-DM read scopes. Independently reject DM and Slack Connect payloads. Private channels stay disabled until the access logic is verified, and are then opted in one at a time (P1).
-- **Google Meet (Meeting Series):** an admin opts in a recurring Calendar event. The connector uses the Calendar API to find each meeting in the series and pulls the transcript Meet saves as a Google Doc in the organizer's Drive. Speaker names in the transcript are matched to Persons through the series' speaker mappings. Meet transcription must be enabled in the Google Workspace. Phase 0 must verify that the minimal Drive and Calendar scopes are enough.
+- **Slack:** bot scopes `channels:read`, `channels:history` and `users:read` (plus `channels:join` only if the bot joins channels itself). Never request DM or group-DM scopes. The bot must be a member of each allowlisted channel. Incremental sync uses `message.channels` events (including the `message_changed` and `message_deleted` subtypes), plus `channel_shared`/`channel_unshared`, `user_change`, `user_guest_status_changed` and `team_join`. Reject any event whose `channel_type` isn't `channel`, and any channel flagged `is_private`, `is_im`, `is_mpim`, `is_ext_shared` or `is_pending_ext_shared`. Backfill can't reach history a free-plan workspace hides (older than 90 days). See [research](research/slack-backfill-and-meet-transcripts.md). Private channels stay disabled until the access logic is verified, and are then opted in one at a time (P1).
+- **Google Meet (Meeting Series):** an admin opts in a recurring Calendar event. The organizer authorizes an Internal OAuth app (offline access) with `calendar.events.owned.readonly` and `meetings.space.readonly`. The connector lists the series' meetings with `events.instances`, matches each to a Meet conference record by meeting code and start time (and stores the meeting space name, because meeting codes can be reused), and reads the transcript entries. Each entry's participant ID maps to a Person through the series' speaker mappings. The Meet API deletes transcript entries 30 days after a meeting, so the connector must poll within that window. Its fallback for older meetings reads the transcript Google Doc with `documents.readonly`. `drive.file` can't see that Doc, and broader Drive scopes need Google's restricted-scope review. Meet transcription needs Google Workspace Business Standard or higher. See [research](research/slack-backfill-and-meet-transcripts.md).
 - **Granola (v0.1):** a documented script turns a Granola export into a `POST /v1/transcripts` call, with the person running it setting the Access Scope. Automatic Granola sync is P1. Granola's API is Enterprise-only and only covers shared folders. Those folders would map onto Meeting Series.
 
 ## Security and privacy implementation
 
-- **Sign-in:** Sign in with Slack (OpenID Connect) for human Principals, which tells full members from guests. Guests can't get a Principal. One bootstrap admin account is used for setup. Agents use admin-issued, revocable tokens. The Slack bot verifies Slack's request signatures and maps Slack IDs to Principals.
+- **Sign-in:** Sign in with Slack (OpenID Connect, `openid profile email`) for human Principals. OIDC doesn't reveal guest status, so after sign-in Bruh checks the workspace ID claim and calls `users.info` (`is_restricted`, `is_ultra_restricted`) to confirm the user is a full member. Guests can't get a Principal. One bootstrap admin account is used for setup. Agents use admin-issued, revocable tokens. The Slack bot verifies Slack's request signatures and maps Slack IDs to Principals.
 - Track the Access Scope behind every Memory. When source permissions change, revoke access through derived indexes and invalidate caches, including the Topic label cache.
 - Treat every piece of outside text, Agent Reports included, as untrusted. Defend against prompt injection, and never follow instructions that come from a connector.
 - Encryption at rest depends on how the host's storage is configured. Support external secrets and TLS. Logs record identifiers, never the text of conversations.
@@ -302,7 +302,7 @@ The thresholds are starting values, calibrated in Phase 4.
 
 ## Implementation phases
 
-1. **Phase 0: foundation.** Repo, a check that every dependency is compatible with Apache-2.0, data schemas, Docker setup, Sign in with Slack, Principals and Agent tokens, ACL design and test harness. Verify the minimal Drive and Calendar scopes and the Slack backfill limits.
+1. **Phase 0: foundation.** Repo, a check that every dependency is compatible with Apache-2.0, data schemas, Docker setup, Sign in with Slack, Principals and Agent tokens, ACL design and test harness. Confirm that every meeting in a recurring series shares one meeting code, and that the Slack app counts as internal for rate limits.
 2. **Phase 1: ingestion.** Selected public Slack channels, revision tracking, the transcript API and Granola script, Meet Meeting Series, Evidence creation, and the retention, edit and delete paths.
 3. **Phase 2: memory engine.** Discussion grouping, the sincerity check, extraction with Confidence and Markers, Topic and Entity resolution, reconciliation, and the Review Queue with Flags and Admin Rulings.
 4. **Phase 3: answer surfaces.** Retrieval filtered by Answer Audience, per-viewer views, citations, REST, web UI, the Slack bot (in-channel and slash command), and MCP with `submit_agent_report`.
@@ -321,7 +321,7 @@ The thresholds are starting values, calibrated in Phase 4.
 
 ## Still needs early validation
 
-- Whether the minimal Drive and Calendar scopes are enough to read Meet transcripts.
-- Slack app scopes and backfill limits under the actual workspace policies.
+- Whether every meeting in a recurring Calendar series shares one Meet meeting code (affects matching conference records).
+- Whether a self-hosted Slack app counts as "internal" and keeps Tier 3 rate limits. Slack doesn't define the term, and its pages conflict on when the 2025 limits apply to existing installs.
 - Model-routing policy for privacy-sensitive installs, and a test that local-only mode makes no outbound calls.
 - Calibration of the Confidence thresholds, Discussion defaults and Agent ranking weight.
