@@ -1,0 +1,3 @@
+# Only a human Person can make a Decision
+
+An Agent Report can produce Proposals, Facts, Questions, Rationale and Commitments owned by that Agent, but never a Decision. A Decision needs a human Person committing in the Evidence. A human can promote an Agent's Proposal by endorsing it, for example with a Decision Marker or a reply such as "agreed". The PRD names invented or premature decisions as Bruh's main trust risk, and Agents stating decisions with confidence is exactly that failure. Giving specific Agents decision authority (one admin opt-in per Agent) was considered and deferred, not ruled out.

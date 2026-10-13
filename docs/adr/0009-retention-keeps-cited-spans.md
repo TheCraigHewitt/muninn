@@ -1,0 +1,3 @@
+# By default, Retention Expiry keeps the Evidence spans that Memories cite
+
+When a Source reaches the end of its retention period, Bruh drops the full Source but keeps the exact Evidence spans that Memories cite, so every Memory stays citable and checkable. Erasing everything (as with a deletion, ADR-0003) is available per channel or per transcript. Keeping Memories with metadata-only citations (link, Author, time) was rejected, because a Memory nobody can check breaks the "citations first" principle. This is a deliberate middle ground on the PRD's open question about reducing raw text while keeping Memories auditable.

@@ -1,0 +1,3 @@
+# An Agent Report's Access Scope can't be wider than what the Agent read
+
+Bruh tracks which Memories and Evidence each Agent session reads. An Agent Report written in that session gets an Access Scope no wider than the narrowest scope among those reads. The Agent may narrow it further, but only an admin can widen it, through the Review Queue. Without this, an Agent could read a restricted Memory and restate it in a workspace-wide report, laundering restricted information into public Evidence. Bruh can't see what an Agent learned outside Bruh, so this closes leaks through Bruh only. The installation guide says so plainly.

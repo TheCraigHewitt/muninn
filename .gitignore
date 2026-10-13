@@ -1,0 +1,12 @@
+# Local working drafts (superseded by docs/PRD.md and docs/TECH_SPEC.md)
+/*.docx
+
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Secrets
+.env
+.env.*
+!.env.example
