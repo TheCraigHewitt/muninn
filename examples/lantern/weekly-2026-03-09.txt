@@ -1,0 +1,21 @@
+Meeting Title: Lantern weekly
+Date: Mar 9
+Meeting participants: Priya Shah, Marcus Lee, Jo Okafor, Dev Patel
+
+Transcript:
+Me: Okay. Dev, you said you had news from the user interviews.
+Dev Patel: Yeah. I talked to twelve people from the waitlist. Nine of them said six a month felt steep for a habit app, and five said they'd only pay yearly.
+Jo Okafor: One of them literally said "I'd pay forty bucks once a year without thinking, but a monthly charge makes me cancel."
+Marcus Lee: Okay, that's hard to argue with.
+Me: So last week we decided on one monthly plan at six dollars. I think we change that.
+Marcus Lee: Good news is the Stripe work is smaller than I thought. Their new billing handles proration for us.
+Me: Then we're changing it. Launch with five dollars a month, or forty-eight dollars a year.
+Dev Patel: Yes.
+Jo Okafor: Agreed.
+Marcus Lee: Agreed.
+Me: The reason is the interviews. People want a yearly option and the monthly price felt too high.
+Jo Okafor: I already did the pricing page for one plan. I'll redo it with both options by Wednesday.
+Marcus Lee: I'll build the annual plan and proration in Stripe this week.
+Dev Patel: And I'll email the twelve interviewees to say thanks, they'll get the first month free.
+Them: Are we still launching on the 20th?
+Me: Yes, launch is still March 20th.

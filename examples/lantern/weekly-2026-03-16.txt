@@ -1,0 +1,18 @@
+Meeting Title: Lantern weekly
+Date: Mar 16
+Meeting participants: Priya Shah, Marcus Lee, Jo Okafor, Dev Patel
+
+Transcript:
+Me: Launch week! Quick check-in.
+Marcus Lee: Annual billing is live in staging. Proration works.
+Me: Nice. So to confirm for everyone, pricing is five a month or forty-eight a year, like we decided last week.
+Jo Okafor: Pricing page is done with both plans.
+Dev Patel: Can we talk about the student question again? The waitlist survey says thirty percent are students.
+Me: Proposal: students get fifty percent off the annual plan with a school email.
+Marcus Lee: I'd rather wait until after launch. Verifying school emails is another thing to build.
+Dev Patel: Fair. Let's park it until April.
+Me: Okay. No student discount at launch. We'll look at it again in April.
+Marcus Lee: Thank you.
+Jo Okafor: One more open thing, nobody has decided who writes the launch announcement.
+Me: I'll write the launch post and send it to the team by Wednesday.
+Dev Patel: Love that. I'll do the newsletter version from your post.

@@ -1,0 +1,52 @@
+[
+ {
+  "user": "U03JO",
+  "text": "Dark mode for launch? I have the colors ready.",
+  "ts": "1772636520.000000"
+ },
+ {
+  "user": "U04DEV",
+  "text": "yes please",
+  "ts": "1772636700.000000",
+  "thread_ts": "1772636520.000000",
+  "reactions": [
+   {
+    "name": "+1",
+    "count": 3
+   }
+  ]
+ },
+ {
+  "user": "U02MARCUS",
+  "text": "It's two days of work and touches every screen. I'd rather ship it in April.",
+  "ts": "1772637600.000000",
+  "thread_ts": "1772636520.000000"
+ },
+ {
+  "user": "U01PRIYA",
+  "text": "Agree with Marcus. Decision: no dark mode at launch, it ships in the April release. Jo, keep the colors.",
+  "ts": "1772638260.000000",
+  "thread_ts": "1772636520.000000",
+  "reactions": [
+   {
+    "name": "white_check_mark",
+    "count": 3
+   }
+  ]
+ },
+ {
+  "user": "U03JO",
+  "text": "sounds good, saving them in Figma",
+  "ts": "1772638380.000000",
+  "thread_ts": "1772636520.000000"
+ },
+ {
+  "bot_id": "B01",
+  "bot_profile": {
+   "name": "stripe"
+  },
+  "subtype": "bot_message",
+  "text": "New subscription: test@example.com ($6.00/mo)",
+  "ts": "1772650800.000000"
+ }
+]

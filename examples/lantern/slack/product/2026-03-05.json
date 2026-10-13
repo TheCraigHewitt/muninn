@@ -1,0 +1,31 @@
+[
+ {
+  "user": "U04DEV",
+  "text": "Should streaks reset at midnight local time or 24h after the last check-in? Support will ask on day one.",
+  "ts": "1772719920.000000"
+ },
+ {
+  "user": "U02MARCUS",
+  "text": "oh great, timezones, my favorite thing in the world \ud83d\ude43",
+  "ts": "1772720100.000000",
+  "thread_ts": "1772719920.000000"
+ },
+ {
+  "user": "U01PRIYA",
+  "text": "Midnight local time. It's what people expect from every other habit app.",
+  "ts": "1772721600.000000",
+  "thread_ts": "1772719920.000000"
+ },
+ {
+  "user": "U02MARCUS",
+  "text": "ok, midnight local it is. I'll make sure we store the user's timezone at signup.",
+  "ts": "1772721720.000000",
+  "thread_ts": "1772719920.000000"
+ },
+ {
+  "user": "U04DEV",
+  "text": "perfect",
+  "ts": "1772721840.000000",
+  "thread_ts": "1772719920.000000"
+ }
+]

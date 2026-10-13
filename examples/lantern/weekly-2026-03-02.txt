@@ -1,0 +1,24 @@
+Meeting Title: Lantern weekly
+Date: Mar 2
+Meeting participants: Priya Shah, Marcus Lee, Jo Okafor, Dev Patel
+
+Transcript:
+Me: Morning all. Big one today, pricing for the launch.
+Marcus Lee: Morning. I brought coffee and opinions.
+Me: Perfect. So, where we landed in the doc: one plan, monthly only, six dollars.
+Dev Patel: Or we go full premium and charge six hundred a month. Very exclusive habits.
+Jo Okafor: Habits for billionaires. Love it.
+Me: Ha. No.
+Dev Patel: Okay, seriously, I'd like an annual option. Most habit apps get half their revenue from annual plans.
+Marcus Lee: Annual means proration and refunds in Stripe, and that's a week of work I don't have before launch.
+Me: Then here's the call. We're launching with a single monthly plan at six dollars. Annual can come after launch.
+Marcus Lee: Works for me.
+Dev Patel: Fine by me, as long as we revisit it.
+Jo Okafor: Agreed.
+Me: Great. The reason is simple, we want launch on March 20th and Marcus is the bottleneck. One plan is the fastest path.
+Jo Okafor: I'll update the pricing page design by Friday.
+Dev Patel: I'll set up the plan in Stripe tomorrow.
+Them: What about students? A lot of our waitlist are students.
+Me: Good question. I don't know yet. Let's not decide that today.
+Marcus Lee: Last thing, imagine if we did lifetime deals, we'd make rent in a week. Not proposing it, just saying.
+Me: Noted and ignored. Thanks all.

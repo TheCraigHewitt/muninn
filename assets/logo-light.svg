@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="200" viewBox="0 0 440 200" role="img" aria-label="bruh.">
+  <path d="M40 24h360a24 24 0 0 1 24 24v88a24 24 0 0 1-24 24H124l-46 32 8-32H40a24 24 0 0 1-24-24V48a24 24 0 0 1 24-24z" fill="none" stroke="#1d1b18" stroke-width="8" stroke-linejoin="round"/>
+  <text x="220" y="122" text-anchor="middle" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="96" font-weight="800" letter-spacing="-4" fill="#1d1b18">bruh<tspan fill="#e8590c">.</tspan></text>
+</svg>
