@@ -57,7 +57,9 @@ def main(argv: list[str] | None = None) -> None:
         from .ask import ask
 
         result = ask(LLM(data_dir()), open_store(), " ".join(args.question))
-        print(textwrap.fill(result["answer"], 100, replace_whitespace=False) + "\n")
+        for para in result["answer"].splitlines():
+            print(textwrap.fill(para, 100, subsequent_indent="  " if para.lstrip().startswith("-") else ""))
+        print()
         for m in result["memories"]:
             print(f"[M{m['id']}] {m['type']} · {m['status']} · {m['as_of']} · {m['topic']}")
             for e in m["evidence"][:2]:

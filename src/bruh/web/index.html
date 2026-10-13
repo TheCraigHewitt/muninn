@@ -160,19 +160,29 @@ function card(m, extra = "") {
   return `<div class="card ${m.status}" data-mem="${m.id}">
     <div class="meta">${typeTag(m.type)} ${statusTag(m.status)} <span>${fmtDate(m.as_of)}</span>
       <span>· ${esc(m.topic)}</span>${m.owner ? `<span>· ${esc(m.owner)}</span>` : ""}
-      ${m.evidence_count > 1 ? `<span>· ${m.evidence_count} sources</span>` : ""}</div>
+      ${m.evidence_count > 1 ? `<span>· ${m.evidence_count} quotes</span>` : ""}</div>
     <div class="statement">${esc(m.statement)}</div>${extra}</div>`;
 }
 
 function renderAnswerText(text) {
-  const blocks = esc(text).split(/\n{2,}/);
-  return blocks.map(b => {
-    const lines = b.split("\n");
-    const inline = s => s.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\[M(\d+)\]/g, `<a class="cite" href="#" data-mem="$1">M$1</a>`);
-    if (lines.every(l => /^\s*([-*]|\d+\.)\s/.test(l))) return "<ul>" + lines.map(l => `<li>${inline(l.replace(/^\s*([-*]|\d+\.)\s/, ""))}</li>`).join("") + "</ul>";
-    return `<p>${inline(lines.join("<br>"))}</p>`;
+  const inline = s => s.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\[M(\d+)\]/g, `<a class="cite" href="#" data-mem="$1">M$1</a>`);
+  const isItem = l => /^\s*([-*•]|\d+\.)\s/.test(l);
+  return esc(text).split(/\n{2,}/).map(block => {
+    let html = "", list = [], para = [];
+    const flush = () => {
+      if (para.length) { html += `<p>${inline(para.join("<br>"))}</p>`; para = []; }
+      if (list.length) { html += "<ul>" + list.map(l => `<li>${inline(l)}</li>`).join("") + "</ul>"; list = []; }
+    };
+    for (const line of block.split("\n")) {
+      if (isItem(line)) { if (para.length) flush(); list.push(line.replace(/^\s*([-*•]|\d+\.)\s/, "")); }
+      else { if (list.length) flush(); para.push(line); }
+    }
+    flush();
+    return html;
   }).join("");
 }
+
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 const views = {
   async ask() {
@@ -231,7 +241,7 @@ const views = {
     const rows = await api("/api/topics");
     $("#view").innerHTML = `<h1>Topics</h1><p class="sub">The subjects your team keeps coming back to.</p>
       <div class="topics">${rows.map(t => `<a class="topic card" href="#/topics/${t.id}"><h3>${esc(t.name)}</h3>
-        <div class="meta"><span>${t.memory_count} memories</span>${t.decisions ? `<span>· ${t.decisions} decisions</span>` : ""}<span>· last ${fmtDate(t.last_seen)}</span></div></a>`).join("")}</div>
+        <div class="meta"><span>${plural(t.memory_count, "memory").replace("memorys", "memories")}</span>${t.decisions ? `<span>· ${plural(t.decisions, "decision")}</span>` : ""}<span>· last ${fmtDate(t.last_seen)}</span></div></a>`).join("")}</div>
       ${rows.length ? "" : `<div class="empty">No topics yet.</div>`}`;
   },
 
@@ -261,8 +271,8 @@ const views = {
     }
     const rows = await api("/api/sources");
     $("#view").innerHTML = `<h1>Sources</h1><p class="sub">The conversations Bruh has read.</p>
-      <table class="src">${rows.map(s => `<tr><td><a href="#/sources/${s.id}">${esc(s.title)}</a><div class="why">${s.kind === "meeting" ? "Meeting" : "Slack channel"} · ${s.line_count} lines</div></td>
-        <td class="why">${fmtDate(s.held_on)}</td><td class="why">${s.memory_count} memories</td></tr>`).join("")}</table>
+      <table class="src">${rows.map(s => `<tr><td><a href="#/sources/${s.id}">${esc(s.title)}</a><div class="why">${s.kind === "meeting" ? "Meeting" : "Slack channel"} · ${plural(s.line_count, "line")}</div></td>
+        <td class="why">${fmtDate(s.held_on)}</td><td class="why">${plural(s.memory_count, "memory").replace("memorys", "memories")}</td></tr>`).join("")}</table>
       ${rows.length ? "" : `<div class="empty">Nothing ingested yet. Run <code>bruh ingest</code>.</div>`}`;
   },
 };

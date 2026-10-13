@@ -40,9 +40,11 @@ def ask(llm: LLM, store: Store, question: str) -> dict:
         memories.sort(key=lambda m: len(words & _words(f"{m['statement']} {m['topic']} {m['owner']}")), reverse=True)
         memories = memories[:MAX_RECORDS]
 
+    quotes = quotes_by_memory(store)
     records = "\n".join(
         f"M{m['id']} [{m['type']}, {m['status']}, {m['as_of']}, topic: {m['topic']}"
         f"{', owner: ' + m['owner'] if m['owner'] else ''}{', retold' if m['retold'] else ''}] {m['statement']}"
+        f"{' | said: ' + ' / '.join(quotes[m['id']]) if quotes.get(m['id']) else ''}"
         for m in sorted(memories, key=lambda m: (m["topic"], m["as_of"]))
     )
     relations = store.db.execute("SELECT from_id, kind, to_id FROM relations").fetchall()
@@ -56,6 +58,17 @@ def ask(llm: LLM, store: Store, question: str) -> dict:
     # Strip citations to records that don't exist, so every remaining one is checkable.
     answer = re.sub(r"\[M(\d+)\]", lambda m: m[0] if int(m[1]) in known else "", result["answer"])
     return {"answer": answer, "memories": [store.memory(i) for i in cited]}
+
+
+def quotes_by_memory(store: Store, per_memory: int = 3, max_chars: int = 90) -> dict[int, list[str]]:
+    """A few short original quotes per memory, so the words people actually used are searchable."""
+    out: dict[int, list[str]] = {}
+    for row in store.db.execute("SELECT memory_id, quote FROM evidence ORDER BY id"):
+        quotes = out.setdefault(row["memory_id"], [])
+        if len(quotes) < per_memory:
+            q = row["quote"]
+            quotes.append(f'"{q[:max_chars]}{"…" if len(q) > max_chars else ""}"')
+    return out
 
 
 def _words(text: str) -> set[str]:
