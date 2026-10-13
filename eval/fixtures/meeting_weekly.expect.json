@@ -1,0 +1,11 @@
+{"checks": [
+  {"kind": "memory_from", "ids": ["L7"], "types": ["decision"], "why": "explicit commit with agreement from both others"},
+  {"kind": "supersedes_from", "ids": ["L7"], "types": ["decision"], "why": "reverses the June decision"},
+  {"kind": "memory_from", "ids": ["L3", "L6"], "types": ["rationale"], "why": "customer demand and small effort explain the reversal"},
+  {"kind": "label", "ids": ["L4"], "sincerity": "joking", "why": "sarcastic Rust rewrite"},
+  {"kind": "no_memory_from", "ids": ["L4"], "why": "joke must produce nothing"},
+  {"kind": "memory_from", "ids": ["L10"], "types": ["commitment"], "why": "Kai owns the spec"},
+  {"kind": "memory_from", "ids": ["L11"], "types": ["question"], "why": "explicitly parked, still open"},
+  {"kind": "label", "ids": ["L13"], "sincerity": "hypothetical", "why": "'Imagine if ...'"},
+  {"kind": "no_memory_from", "ids": ["L13"], "types": ["decision", "proposal"], "why": "hypothetical, explicitly 'not now'"}
+]}

@@ -1,0 +1,14 @@
+# Synthetic weekly team meeting transcript. Reverses an earlier decision.
+[00:00:15] Lena: Okay, first item. Back in June we decided not to build a public API this year.
+[00:00:24] Omar: Right, and honestly I think that was correct at the time, we didn't have the headcount.
+[00:00:40] Lena: But three of our five biggest customers asked for it this quarter.
+[00:01:02] Omar: Sure, and while we're at it let's rewrite the whole backend in Rust.
+[00:01:05] Lena: (laughs) Please no.
+[00:01:20] Omar: Seriously though, a read-only API is maybe three weeks of work.
+[00:01:41] Lena: Then let's do it. We're going with a read-only public API in Q4. Everyone okay with that?
+[00:01:44] Omar: Yes.
+[00:01:45] Kai: Yep, agreed.
+[00:02:10] Kai: I'll write the API spec and share it by next Friday.
+[00:02:30] Omar: Do we charge for API access or include it in every plan? We should figure that out.
+[00:02:41] Lena: Let's park that for next week.
+[00:03:05] Kai: Imagine if we opened write access too, we'd have integrations everywhere. Not now though.

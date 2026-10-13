@@ -1,0 +1,13 @@
+# Synthetic Slack channel. Proposal, sarcasm, hypothetical, objection, decision, rationale, commitment, open question, quote.
+Maya: Should we drop the free tier? Support load from free users is eating ~30% of our week.
+Dev: oh sure, let's just charge everyone $500/mo and call it a day 🙃
+Priya: What if we killed the free tier entirely and went trial-only? Just thinking out loud.
+Maya: I'd propose we cap free at 1 project instead of killing it.  [reactions: :+1:x3]
+Sam: Objection: a 1-project cap breaks the onboarding flow for agencies.
+Maya: Fair. Then cap free at 2 projects, and agencies get a 30-day trial instead.
+Sam: That works for me.
+Priya: Agreed. Decision: free tier capped at 2 projects starting March 1, agencies get a 30-day trial.  [reactions: :white_check_mark:x4]
+Maya: The reason is support cost. Free accounts are 70% of tickets but 3% of revenue.
+Dev: I'll update the pricing page and the signup flow by Feb 20.
+Sam: One thing we haven't figured out: what happens to existing free users who already have 3+ projects?
+Priya: A customer told me last week "if you cap free, we're leaving for a competitor".

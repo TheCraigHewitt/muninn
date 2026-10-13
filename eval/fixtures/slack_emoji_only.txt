@@ -1,0 +1,6 @@
+# Synthetic Slack channel. A popular proposal that nobody actually commits to.
+Jordan: I think we should move standup to 10am so the EU folks can join.  [reactions: :+1:x5 :raised_hands:x2]
+Alex: 🙌
+Jordan: cool cool
+Riley: lol we should just do standup at 3am so nobody is happy
+Alex: For the record, the EU team is now 6 people.

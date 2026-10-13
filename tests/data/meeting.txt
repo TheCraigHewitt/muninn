@@ -1,0 +1,10 @@
+Meeting Title: Weekly sync
+Date: Mar 2
+Meeting participants: Maya Chen, team@example.com
+
+Transcript:
+Maya: Hello all.
+Me: Let's decide on the launch date.
+Them: How about Friday?
+Me: Friday works, we're going with Friday.
+that's the plan

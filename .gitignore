@@ -13,3 +13,8 @@
 
 # Local data: real conversations, caches, databases. Never committed.
 /data/
+
+# Python
+__pycache__/
+.venv/
+.pytest_cache/

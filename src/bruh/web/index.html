@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bruh</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<style>
+:root {
+  --bg: #faf9f7; --panel: #ffffff; --ink: #1d1b18; --muted: #6f6a62; --faint: #e9e5df; --line: #ddd7cf;
+  --accent: #d9480f; --accent-soft: #fff0e8;
+  --decision: #2b8a3e; --proposal: #b7791f; --rationale: #1c7ed6; --commitment: #7048e8; --fact: #5c6670; --question: #c2255c;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141311; --panel: #1d1b19; --ink: #efebe5; --muted: #a39d94; --faint: #2a2724; --line: #37332f;
+    --accent: #ff8a4c; --accent-soft: #3a2418;
+    --decision: #69db7c; --proposal: #fcc419; --rationale: #74c0fc; --commitment: #b197fc; --fact: #adb5bd; --question: #f783ac;
+    --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif; }
+a { color: inherit; }
+button { font: inherit; cursor: pointer; }
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+
+header { border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 5; }
+.top { display: flex; align-items: center; gap: 16px; padding: 14px 0 0; flex-wrap: wrap; }
+.brand { font-weight: 800; font-size: 22px; letter-spacing: -.02em; text-decoration: none; }
+.brand span { color: var(--accent); }
+.tagline { color: var(--muted); font-size: 13px; flex: 1; min-width: 180px; }
+.stats { display: flex; gap: 14px; color: var(--muted); font-size: 13px; }
+.stats b { color: var(--ink); }
+nav { display: flex; gap: 4px; overflow-x: auto; margin-top: 10px; }
+nav a { text-decoration: none; padding: 8px 12px; border-bottom: 2px solid transparent; color: var(--muted); white-space: nowrap; font-weight: 500; }
+nav a.on { color: var(--ink); border-color: var(--accent); }
+.badge { background: var(--accent); color: #fff; border-radius: 10px; padding: 0 7px; font-size: 12px; margin-left: 4px; }
+
+main { padding: 24px 0 80px; }
+h1 { font-size: 22px; letter-spacing: -.01em; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 18px; }
+
+.askbox { display: flex; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 6px; box-shadow: var(--shadow); }
+.askbox input { flex: 1; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 17px; padding: 10px 12px; outline: none; min-width: 0; }
+.askbox button { background: var(--accent); color: #fff; border: 0; border-radius: 10px; padding: 0 18px; font-weight: 600; }
+.askbox button:disabled { opacity: .5; }
+.examples { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; }
+.examples button { background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 4px 12px; font-size: 13px; }
+.examples button:hover { color: var(--ink); border-color: var(--muted); }
+
+.answer { margin-top: 22px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; box-shadow: var(--shadow); }
+.answer .q { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+.answer .body p { margin: 0 0 10px; }
+.answer .body ul { margin: 0 0 10px; padding-left: 20px; }
+.cite { display: inline-block; font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 0 5px; margin: 0 1px; text-decoration: none; vertical-align: 1px; }
+.thinking { color: var(--muted); display: flex; align-items: center; gap: 10px; }
+.dots span { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 3px; animation: blink 1.2s infinite; }
+.dots span:nth-child(2) { animation-delay: .2s; } .dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes blink { 0%, 80%, 100% { opacity: .2; } 40% { opacity: 1; } }
+
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; align-items: center; }
+.chip { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.chip.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.search { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px; padding: 4px 14px; font: inherit; font-size: 13px; min-width: 180px; flex: 1; max-width: 280px; }
+
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; transition: border-color .1s; }
+.card:hover { border-color: var(--muted); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.type { font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 11px; }
+.status { border-radius: 6px; padding: 0 6px; font-size: 11px; font-weight: 600; }
+.status.review { background: #fff3bf; color: #8a6100; }
+.status.superseded { background: var(--faint); color: var(--muted); text-decoration: line-through; }
+.status.rejected { background: var(--faint); color: var(--muted); }
+@media (prefers-color-scheme: dark) { .status.review { background: #3d3412; color: #ffd43b; } }
+.statement { font-size: 15.5px; }
+.card.superseded .statement { color: var(--muted); }
+.empty { color: var(--muted); padding: 30px 0; text-align: center; }
+
+.topics { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.topic { text-decoration: none; display: block; }
+.topic h3 { margin: 0 0 4px; font-size: 15.5px; }
+.timeline { border-left: 2px solid var(--line); margin-left: 6px; padding-left: 18px; }
+.tl { position: relative; }
+.tl::before { content: ""; position: absolute; left: -25px; top: 18px; width: 10px; height: 10px; border-radius: 50%; background: var(--panel); border: 2px solid var(--muted); }
+.tl.decision::before { border-color: var(--decision); background: var(--decision); }
+.link { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.link a { color: var(--accent); text-decoration: none; }
+
+.review-actions { display: flex; gap: 8px; margin-top: 10px; }
+.btn { border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 8px; padding: 5px 14px; font-size: 13px; font-weight: 600; }
+.btn.yes { background: var(--decision); border-color: var(--decision); color: #fff; }
+@media (prefers-color-scheme: dark) { .btn.yes { color: #10230f; } }
+
+table.src { width: 100%; border-collapse: collapse; }
+.src td { padding: 10px 6px; border-bottom: 1px solid var(--faint); vertical-align: top; }
+.src a { text-decoration: none; font-weight: 600; }
+.lines { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.ln { display: grid; grid-template-columns: 52px 1fr; gap: 10px; padding: 6px 12px; border-bottom: 1px solid var(--faint); font-size: 14px; }
+.ln .id { color: var(--muted); font: 12px ui-monospace, monospace; padding-top: 2px; }
+.ln .who { font-weight: 600; margin-right: 6px; }
+.ln .when { color: var(--muted); font-size: 12px; margin-right: 6px; }
+.ln.cited { background: var(--accent-soft); }
+.ln.target { outline: 2px solid var(--accent); outline-offset: -2px; }
+mark { background: color-mix(in srgb, var(--accent) 30%, transparent); color: inherit; border-radius: 3px; }
+
+.drawer-bg { position: fixed; inset: 0; background: rgba(0,0,0,.25); z-index: 10; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(520px, 100%); background: var(--panel); border-left: 1px solid var(--line); z-index: 11; overflow-y: auto; padding: 20px; box-shadow: -10px 0 30px rgba(0,0,0,.12); }
+.drawer .close { float: right; background: none; border: 0; font-size: 22px; color: var(--muted); line-height: 1; }
+.drawer h2 { font-size: 19px; line-height: 1.4; margin: 6px 0 12px; }
+.drawer h4 { margin: 18px 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.ev { border-left: 3px solid var(--accent); padding: 4px 0 4px 12px; margin-bottom: 12px; }
+.ev q { font-style: italic; }
+.ev q::before { content: "“"; } .ev q::after { content: "”"; }
+.ev .from { font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.ev .from a { color: var(--accent); text-decoration: none; }
+.why { color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="#/ask">bruh<span>.</span></a>
+      <div class="tagline">Your company talked about it. Bruh remembers.</div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <nav id="nav">
+      <a href="#/ask" data-tab="ask">Ask</a>
+      <a href="#/memories" data-tab="memories">Memories</a>
+      <a href="#/topics" data-tab="topics">Topics</a>
+      <a href="#/review" data-tab="review">Review</a>
+      <a href="#/sources" data-tab="sources">Sources</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap" id="view"></main>
+<div id="drawer"></div>
+
+<script>
+const $ = (sel, el = document) => el.querySelector(sel);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const api = async (path, opts) => {
+  const r = await fetch(path, opts);
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+  return r.json();
+};
+const post = (path, body) => api(path, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+
+const TYPES = ["decision", "proposal", "rationale", "commitment", "fact", "question"];
+const typeTag = t => `<span class="type" style="color:var(--${t})">${t}</span>`;
+const statusTag = s => s === "active" ? "" : `<span class="status ${s}">${s === "review" ? "needs review" : s}</span>`;
+const fmtDate = d => d ? new Date(d + "T12:00:00").toLocaleDateString(undefined, {month: "short", day: "numeric", year: "numeric"}) : "";
+
+let lastAnswer = null;
+let memFilter = {type: "", q: ""};
+
+function card(m, extra = "") {
+  return `<div class="card ${m.status}" data-mem="${m.id}">
+    <div class="meta">${typeTag(m.type)} ${statusTag(m.status)} <span>${fmtDate(m.as_of)}</span>
+      <span>· ${esc(m.topic)}</span>${m.owner ? `<span>· ${esc(m.owner)}</span>` : ""}
+      ${m.evidence_count > 1 ? `<span>· ${m.evidence_count} sources</span>` : ""}</div>
+    <div class="statement">${esc(m.statement)}</div>${extra}</div>`;
+}
+
+function renderAnswerText(text) {
+  const blocks = esc(text).split(/\n{2,}/);
+  return blocks.map(b => {
+    const lines = b.split("\n");
+    const inline = s => s.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\[M(\d+)\]/g, `<a class="cite" href="#" data-mem="$1">M$1</a>`);
+    if (lines.every(l => /^\s*([-*]|\d+\.)\s/.test(l))) return "<ul>" + lines.map(l => `<li>${inline(l.replace(/^\s*([-*]|\d+\.)\s/, ""))}</li>`).join("") + "</ul>";
+    return `<p>${inline(lines.join("<br>"))}</p>`;
+  }).join("");
+}
+
+const views = {
+  async ask() {
+    const examples = ["What have we decided recently?", "What is still open?", "Who has committed to what?", "What changed our minds this month?"];
+    $("#view").innerHTML = `
+      <h1>Ask Bruh</h1><p class="sub">Answers come only from what was said, and every claim links to the exact words.</p>
+      <form class="askbox" id="askform"><input id="q" placeholder="Why did we…? What did we decide about…? Who owns…?" autocomplete="off" autofocus>
+      <button id="go">Ask</button></form>
+      <div class="examples">${examples.map(e => `<button type="button">${esc(e)}</button>`).join("")}</div>
+      <div id="answer"></div>`;
+    const show = a => {
+      $("#answer").innerHTML = `<div class="answer"><div class="q">${esc(a.question)}</div><div class="body">${renderAnswerText(a.answer)}</div></div>
+        ${a.memories.length ? `<h4 style="margin:22px 0 10px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em">Cited</h4>` + a.memories.map(m => card(m)).join("") : ""}`;
+    };
+    const run = async question => {
+      if (!question.trim()) return;
+      $("#q").value = question; $("#go").disabled = true;
+      $("#answer").innerHTML = `<div class="answer thinking"><span class="dots"><span></span><span></span><span></span></span> Reading the record…</div>`;
+      try { lastAnswer = {question, ...(await post("/api/ask", {question}))}; show(lastAnswer); }
+      catch (e) { $("#answer").innerHTML = `<div class="answer">Something went wrong: ${esc(e.message)}</div>`; }
+      $("#go").disabled = false;
+    };
+    $("#askform").onsubmit = e => { e.preventDefault(); run($("#q").value); };
+    document.querySelectorAll(".examples button").forEach(b => b.onclick = () => run(b.textContent));
+    if (lastAnswer) { $("#q").value = lastAnswer.question; show(lastAnswer); }
+  },
+
+  async memories() {
+    $("#view").innerHTML = `<h1>Memories</h1><p class="sub">Everything Bruh has recorded, newest first.</p>
+      <div class="filters"><button class="chip" data-type="">all</button>${TYPES.map(t => `<button class="chip" data-type="${t}">${t}s</button>`).join("")}
+      <input class="search" id="search" placeholder="Filter…" value="${esc(memFilter.q)}"></div><div id="list"></div>`;
+    const draw = async () => {
+      document.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c.dataset.type === memFilter.type));
+      const params = new URLSearchParams({q: memFilter.q}); if (memFilter.type) params.set("type", memFilter.type);
+      const rows = await api("/api/memories?" + params);
+      $("#list").innerHTML = rows.length ? rows.map(m => card(m)).join("") : `<div class="empty">Nothing here yet.</div>`;
+    };
+    document.querySelectorAll(".chip").forEach(c => c.onclick = () => { memFilter.type = c.dataset.type; draw(); });
+    let t; $("#search").oninput = e => { clearTimeout(t); t = setTimeout(() => { memFilter.q = e.target.value; draw(); }, 200); };
+    draw();
+  },
+
+  async topics(id) {
+    if (id) {
+      const t = await api("/api/topics/" + id);
+      $("#view").innerHTML = `<p class="sub"><a href="#/topics">← Topics</a></p><h1>${esc(t.name)}</h1>
+        <p class="sub">How this subject developed, oldest first.</p><div class="timeline">${t.memories.map(m => {
+          const links = m.relations.filter(r => r.kind !== "explains" || r.direction === "out").map(r => {
+            const label = {supersedes: r.direction === "out" ? "replaces" : "replaced by", contradicts: "conflicts with", explains: "explains"}[r.kind];
+            return `<div class="link">${label} <a href="#" data-mem="${r.id}">M${r.id}</a> · ${esc(r.statement.slice(0, 90))}${r.statement.length > 90 ? "…" : ""}</div>`;
+          }).join("");
+          return `<div class="tl ${m.type}">${card(m, links)}</div>`;
+        }).join("")}</div>`;
+      return;
+    }
+    const rows = await api("/api/topics");
+    $("#view").innerHTML = `<h1>Topics</h1><p class="sub">The subjects your team keeps coming back to.</p>
+      <div class="topics">${rows.map(t => `<a class="topic card" href="#/topics/${t.id}"><h3>${esc(t.name)}</h3>
+        <div class="meta"><span>${t.memory_count} memories</span>${t.decisions ? `<span>· ${t.decisions} decisions</span>` : ""}<span>· last ${fmtDate(t.last_seen)}</span></div></a>`).join("")}</div>
+      ${rows.length ? "" : `<div class="empty">No topics yet.</div>`}`;
+  },
+
+  async review() {
+    const rows = await api("/api/memories?status=review");
+    $("#view").innerHTML = `<h1>Review</h1><p class="sub">Bruh wasn't sure enough to record these as settled. Confirm the ones that are right.</p>
+      <div id="list">${rows.length ? rows.map(m => card(m, `<div class="why">${esc(m.confidence_reason)}</div>
+        <div class="review-actions"><button class="btn yes" data-rule="${m.id}" data-approve="1">Yes, that's right</button>
+        <button class="btn" data-rule="${m.id}" data-approve="">Not right</button></div>`)).join("") : `<div class="empty">All clear. Nothing waiting for review.</div>`}</div>`;
+    document.querySelectorAll("[data-rule]").forEach(b => b.onclick = async e => {
+      e.stopPropagation();
+      await post(`/api/memories/${b.dataset.rule}/review`, {approve: !!b.dataset.approve});
+      views.review(); loadStats();
+    });
+  },
+
+  async sources(id, line) {
+    if (id) {
+      const s = await api("/api/sources/" + id);
+      $("#view").innerHTML = `<p class="sub"><a href="#/sources">← Sources</a></p><h1>${esc(s.title)}</h1>
+        <p class="sub">${s.kind === "meeting" ? "Meeting" : "Slack"} · ${fmtDate(s.held_on)} · highlighted lines are cited by a memory</p>
+        <div class="lines">${s.lines.map(l => `<div class="ln ${l.memories.length ? "cited" : ""}" id="line-${l.line_id}">
+          <div class="id">${l.line_id}</div><div>${l.ts ? `<span class="when">${esc(l.ts)}</span>` : ""}<span class="who">${esc(l.author)}</span>${esc(l.text)}
+          ${[...new Set(l.memories)].map(m => `<a class="cite" href="#" data-mem="${m}">M${m}</a>`).join("")}</div></div>`).join("")}</div>`;
+      if (line) { const el = $("#line-" + line); if (el) { el.classList.add("target"); el.scrollIntoView({block: "center"}); } }
+      return;
+    }
+    const rows = await api("/api/sources");
+    $("#view").innerHTML = `<h1>Sources</h1><p class="sub">The conversations Bruh has read.</p>
+      <table class="src">${rows.map(s => `<tr><td><a href="#/sources/${s.id}">${esc(s.title)}</a><div class="why">${s.kind === "meeting" ? "Meeting" : "Slack channel"} · ${s.line_count} lines</div></td>
+        <td class="why">${fmtDate(s.held_on)}</td><td class="why">${s.memory_count} memories</td></tr>`).join("")}</table>
+      ${rows.length ? "" : `<div class="empty">Nothing ingested yet. Run <code>bruh ingest</code>.</div>`}`;
+  },
+};
+
+async function openMemory(id) {
+  const m = await api("/api/memories/" + id);
+  const rel = m.relations.map(r => {
+    const label = {supersedes: r.direction === "out" ? "Replaces" : "Replaced by", contradicts: "Conflicts with", explains: r.direction === "out" ? "Explains" : "Explained by"}[r.kind];
+    return `<div class="card" data-mem="${r.id}"><div class="meta"><b>${label}</b> ${typeTag(r.type)} ${statusTag(r.status)} <span>${fmtDate(r.as_of)}</span></div><div class="statement">${esc(r.statement)}</div></div>`;
+  }).join("");
+  $("#drawer").innerHTML = `<div class="drawer-bg"></div><aside class="drawer">
+    <button class="close" aria-label="Close">×</button>
+    <div class="meta">${typeTag(m.type)} ${statusTag(m.status)} <span>M${m.id}</span> <span>· ${fmtDate(m.as_of)}</span>${m.retold ? "<span>· decided earlier, retold here</span>" : ""}</div>
+    <h2>${esc(m.statement)}</h2>
+    <div class="meta"><a href="#/topics/${m.topic_id}">${esc(m.topic)}</a>${m.owner ? `<span>· owner: ${esc(m.owner)}</span>` : ""}<span>· confidence ${Math.round(m.confidence * 100)}%</span></div>
+    <h4>What was said</h4>
+    ${m.evidence.map(e => `<div class="ev"><q>${esc(e.quote)}</q><div class="from">${esc(e.author)} · ${esc(e.ts || fmtDate(e.held_on))} ·
+      <a href="#/sources/${e.source_id}/${e.line_id}">${esc(e.source_title)} ${e.line_id}</a>${e.role === "support" ? " · came up again" : ""}</div></div>`).join("")}
+    ${rel ? `<h4>Connected</h4>${rel}` : ""}
+    <h4>Why Bruh recorded it this way</h4><p class="why">${esc(m.confidence_reason)}</p>
+  </aside>`;
+  const close = () => $("#drawer").innerHTML = "";
+  $(".drawer .close").onclick = close; $(".drawer-bg").onclick = close;
+  document.onkeydown = e => { if (e.key === "Escape") close(); };
+}
+
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-mem]");
+  if (el && !e.target.closest("[data-rule]")) { e.preventDefault(); openMemory(el.dataset.mem); }
+  if (e.target.closest(".drawer a[href^='#/']")) $("#drawer").innerHTML = "";
+});
+
+async function loadStats() {
+  const s = await api("/api/stats");
+  $("#stats").innerHTML = `<span><b>${s.decisions}</b> decisions</span><span><b>${s.memories}</b> memories</span><span><b>${s.sources}</b> sources</span>`;
+  const r = document.querySelector('[data-tab="review"]');
+  r.innerHTML = "Review" + (s.review ? `<span class="badge">${s.review}</span>` : "");
+}
+
+function route() {
+  const [tab, id, extra] = (location.hash.replace(/^#\/?/, "") || "ask").split("/");
+  document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
+  (views[tab] || views.ask)(id, extra);
+  window.scrollTo(0, 0);
+}
+window.onhashchange = route;
+loadStats(); route();
+</script>
+</body>
+</html>

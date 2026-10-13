@@ -1,0 +1,7 @@
+[
+  {"user": "U1", "text": "Should we move standup to 10am?", "ts": "1772442000.000100", "thread_ts": "1772442000.000100"},
+  {"user": "U2", "text": "Unrelated: deploy is green", "ts": "1772442600.000100"},
+  {"user": "U2", "text": "Yes <@U1>, let's do 10am", "ts": "1772442900.000100", "thread_ts": "1772442000.000100", "reactions": [{"name": "+1", "count": 2}]},
+  {"subtype": "channel_join", "user": "U2", "text": "joined", "ts": "1772443000.000100"},
+  {"bot_id": "B1", "bot_profile": {"name": "deploybot"}, "text": "Build 42 passed", "ts": "1772443100.000100"}
+]
