@@ -87,6 +87,26 @@ Everything Bruh stores lives in `data/`, which git ignores. Model responses are 
 
 Also from the terminal: `bruh ask "what did we decide about pricing?"` and `bruh review` for anything waiting on a human.
 
+## Leave it running
+
+Exports are fine for a first look. Bruh's better when it's just *there*.
+
+**In Slack.** Invite `@bruh` to a channel and it follows along, reading what was said once the conversation goes quiet. Then anyone can ask:
+
+> **you:** @bruh what are we charging at launch?<br>
+> **bruh:** Two plans at launch: $5/month or $48/year [1]. It was a single $6/month plan until Mar 9 [2].<br>
+> **Receipts**<br>
+> **[1]** Decision · Mar 9, 2026<br>
+> "Then we're changing it. Launch with five dollars a month, or forty-eight dollars a year." — Priya Shah, Lantern weekly (Mar 9, 2026)
+
+Setting it up takes about 10 minutes and a Slack admin: [`docs/SLACK.md`](docs/SLACK.md).
+
+**A transcript folder.** Point Bruh at the folder your meeting-notes app exports to, and every new transcript gets read as it lands:
+
+```sh
+uv run --env-file .env bruh serve --slack --watch ~/Transcripts   # web app + Slack + folder, all at once
+```
+
 ## How it works
 
 1. **Read.** Each conversation is split into numbered lines with a speaker and a time.
@@ -106,7 +126,7 @@ Also from the terminal: `bruh ask "what did we decide about pricing?"` and `bruh
 
 ## Status
 
-v0 is local and single-user: one person, one laptop, exported files. The full design (live Slack and Google Meet connectors, sign-in, per-channel permissions, an MCP server so agents can use the same memory) is written up in [`docs/`](docs/). Start with [`docs/V0.md`](docs/V0.md) for what's built and what isn't.
+v0 runs on one machine for one team: exported files, a transcript folder, and a Slack bot. Everyone who can ask it can hear about everything it's read, so only feed it what the whole team could see anyway. The full design (Google Meet without the export step, sign-in, per-channel permissions, an MCP server so agents can use the same memory) is written up in [`docs/`](docs/). Start with [`docs/V0.md`](docs/V0.md) for what's built and what isn't.
 
 ```sh
 uv run pytest                          # offline tests, no API calls

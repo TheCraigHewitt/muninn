@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS lines (
     ts TEXT NOT NULL,
     author TEXT NOT NULL,
     text TEXT NOT NULL,
+    ref TEXT NOT NULL DEFAULT '',  -- where the line lives outside Bruh, e.g. "C0123:1712345678.000100" for Slack
     PRIMARY KEY (source_id, line_id)
 );
 CREATE TABLE IF NOT EXISTS topics (
@@ -69,10 +70,14 @@ def now() -> str:
 
 class Store:
     def __init__(self, path: Path | str):
-        self.db = sqlite3.connect(str(path), check_same_thread=False)
+        # One Store per thread of work (web, Slack, folder watcher); WAL lets them share the file.
+        self.db = sqlite3.connect(str(path), check_same_thread=False, timeout=30)
         self.db.row_factory = sqlite3.Row
+        self.db.execute("PRAGMA journal_mode = WAL")
         self.db.execute("PRAGMA foreign_keys = ON")
         self.db.executescript(SCHEMA)
+        if "ref" not in {r["name"] for r in self.db.execute("PRAGMA table_info(lines)")}:
+            self.db.execute("ALTER TABLE lines ADD COLUMN ref TEXT NOT NULL DEFAULT ''")
 
     # ---- sources ----
 
@@ -86,8 +91,8 @@ class Store:
         )
         source_id = cur.lastrowid
         self.db.executemany(
-            "INSERT INTO lines (source_id, line_id, seq, ts, author, text) VALUES (?, ?, ?, ?, ?, ?)",
-            [(source_id, l.id, i, l.ts, l.author, l.text) for i, l in enumerate(source.lines)],
+            "INSERT INTO lines (source_id, line_id, seq, ts, author, text, ref) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [(source_id, l.id, i, l.ts, l.author, l.text, l.ref) for i, l in enumerate(source.lines)],
         )
         return source_id
 
@@ -112,6 +117,33 @@ class Store:
         for r in cited:
             by_line.setdefault(r["line_id"], []).append(r["memory_id"])
         return {**dict(row), "lines": [{**dict(l), "memories": by_line.get(l["line_id"], [])} for l in lines]}
+
+    def last_line_ts(self, kind: str, title: str) -> str:
+        """The newest line already read from conversations with this title, e.g. a Slack channel."""
+        row = self.db.execute("""SELECT MAX(l.ts) FROM lines l JOIN sources s ON s.id = l.source_id
+                                 WHERE s.kind = ? AND s.title = ?""", (kind, title)).fetchone()
+        return row[0] or ""
+
+    def erase_line(self, ref: str) -> int:
+        """Someone deleted the original: blank every copy of it and drop the Evidence that quoted it.
+
+        A Memory left with no Evidence goes too, along with its links. Returns how many Memories went.
+        """
+        lines = self.db.execute("SELECT source_id, line_id FROM lines WHERE ref = ?", (ref,)).fetchall()
+        touched = set()
+        for l in lines:
+            rows = self.db.execute("SELECT memory_id FROM evidence WHERE source_id = ? AND line_id = ?",
+                                   (l["source_id"], l["line_id"])).fetchall()
+            touched |= {r["memory_id"] for r in rows}
+            self.db.execute("DELETE FROM evidence WHERE source_id = ? AND line_id = ?", (l["source_id"], l["line_id"]))
+        self.db.execute("UPDATE lines SET text = '', author = '' WHERE ref = ?", (ref,))
+        orphans = [m for m in touched
+                   if not self.db.execute("SELECT 1 FROM evidence WHERE memory_id = ?", (m,)).fetchone()]
+        for m in orphans:
+            self.db.execute("DELETE FROM relations WHERE from_id = ? OR to_id = ?", (m, m))
+            self.db.execute("DELETE FROM memories WHERE id = ?", (m,))
+        self.db.commit()
+        return len(orphans)
 
     # ---- topics ----
 
@@ -188,7 +220,7 @@ class Store:
 
     def evidence(self, memory_id: int) -> list[dict]:
         rows = self.db.execute("""
-            SELECT e.source_id, e.line_id, e.quote, e.role, l.author, l.ts, s.title AS source_title,
+            SELECT e.source_id, e.line_id, e.quote, e.role, l.author, l.ts, l.ref, s.title AS source_title,
                    s.kind AS source_kind, s.held_on
             FROM evidence e
             JOIN lines l ON l.source_id = e.source_id AND l.line_id = e.line_id

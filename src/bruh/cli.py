@@ -3,6 +3,9 @@
     bruh ingest PATH...     read transcripts (.txt) and Slack export folders into memory
     bruh ask "QUESTION"     answer from memory, with citations
     bruh serve              open the web app at http://127.0.0.1:8765
+                            (--slack also runs the Slack bot, --watch DIR the folder watcher)
+    bruh slack              run the Slack bot: read invited channels, answer @bruh and /bruh
+    bruh watch DIR...       read new meeting transcripts as they appear in these folders
     bruh review             list memories waiting for a person to confirm them
     bruh eval               run the extraction evals in eval/fixtures
     bruh spend              show model usage and estimated cost
@@ -30,6 +33,12 @@ def open_store() -> Store:
     return Store(data_dir() / "bruh.db")
 
 
+def check_folders(folders: list[Path]) -> None:
+    missing = [str(f) for f in folders if not f.is_dir()]
+    if missing:
+        sys.exit(f"not a folder: {', '.join(missing)}")
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(prog="bruh", description="Your company talked about it. Bruh remembers.")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -39,6 +48,13 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("question", nargs="+")
     p = sub.add_parser("serve", help="run the web app")
     p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--slack", action="store_true", help="also run the Slack bot")
+    p.add_argument("--watch", type=Path, action="append", default=[], metavar="DIR",
+                   help="also read new transcripts from this folder (repeatable)")
+    sub.add_parser("slack", help="run the Slack bot")
+    p = sub.add_parser("watch", help="read new transcripts from folders as they appear")
+    p.add_argument("folders", nargs="+", type=Path)
+    p.add_argument("--interval", type=float, default=30, help="seconds between looks (default 30)")
     sub.add_parser("review", help="list memories waiting for review")
     p = sub.add_parser("eval", help="run extraction evals")
     p.add_argument("folder", nargs="?", type=Path, default=ROOT / "eval" / "fixtures")
@@ -65,12 +81,33 @@ def main(argv: list[str] | None = None) -> None:
             for e in m["evidence"][:2]:
                 print(f"     “{e['quote']}” — {e['author']}, {e['source_title']} {e['ts'] or e['held_on']}")
     elif args.command == "serve":
+        import threading
+
         import uvicorn
 
         from .web.app import create_app
 
+        check_folders(args.watch)
+        if args.slack:
+            from .slack import run
+
+            run(LLM(data_dir()), data_dir() / "bruh.db", block=False)
+        if args.watch:
+            from .watch import Watcher
+
+            watcher = Watcher(LLM(data_dir()), open_store(), args.watch, log=lambda m: print(f"[watch] {m}", flush=True))
+            threading.Thread(target=watcher.run, name="bruh-watch", daemon=True).start()
         print(f"Bruh is running at http://127.0.0.1:{args.port}")
         uvicorn.run(create_app(open_store(), LLM(data_dir())), host="127.0.0.1", port=args.port, log_level="warning")
+    elif args.command == "slack":
+        from .slack import run
+
+        run(LLM(data_dir()), data_dir() / "bruh.db")
+    elif args.command == "watch":
+        from .watch import Watcher
+
+        check_folders(args.folders)
+        Watcher(LLM(data_dir()), open_store(), args.folders).run(args.interval)
     elif args.command == "review":
         for m in open_store().memories(status="review"):
             print(f"M{m['id']} {m['type']} ({m['confidence']:.2f}) {m['statement']}")

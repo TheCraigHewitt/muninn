@@ -1,6 +1,7 @@
 """Ingest: read a Source, extract candidates, reconcile them with existing Memories, store."""
 
 import re
+import threading
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -53,6 +54,9 @@ RECONCILE_SCHEMA = {
 
 MAX_EXISTING = 250
 
+# The web app, the Slack bot and the folder watcher can all ingest; reconciling has to happen one at a time.
+LOCK = threading.Lock()
+
 
 @dataclass
 class Report:
@@ -67,10 +71,16 @@ class Report:
 
 def ingest_paths(llm: LLM, store: Store, paths: list[Path], progress=print) -> list[Report]:
     """Ingest files and Slack channel folders, oldest conversation first."""
-    loaded = []
-    for path in expand(paths):
-        loaded.extend(src.load(path))
-    loaded.sort(key=lambda s: (s.held_on or "9999", s.kind == "slack", s.name))
+    return ingest_sources(llm, store, [s for path in expand(paths) for s in src.load(path)], progress)
+
+
+def ingest_sources(llm: LLM, store: Store, loaded: list[src.Source], progress=print) -> list[Report]:
+    with LOCK:
+        return _ingest_sources(llm, store, loaded, progress)
+
+
+def _ingest_sources(llm: LLM, store: Store, loaded: list[src.Source], progress) -> list[Report]:
+    loaded = sorted(loaded, key=lambda s: (s.held_on or "9999", s.kind == "slack", s.name))
 
     # Reading each conversation is independent, so do it in parallel; reconciling has to go in date order.
     todo = [s for s in loaded if not skip_reason(store, s)]

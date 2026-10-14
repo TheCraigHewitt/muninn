@@ -28,6 +28,7 @@ class Line:
     author: str
     text: str
     ts: str = ""  # "YYYY-MM-DD HH:MM" for Slack, "HH:MM:SS" offsets for transcripts, or ""
+    ref: str = ""  # where it lives outside Bruh: "CHANNEL_ID:TS" for live Slack messages
 
 
 @dataclass
@@ -71,7 +72,7 @@ def by_week(channel: Source) -> list[Source]:
         weeks.setdefault(week, []).append(line)
     out = []
     for week, lines in sorted(weeks.items()):
-        lines = [Line("", l.author, l.text, l.ts) for l in lines]
+        lines = [Line("", l.author, l.text, l.ts, l.ref) for l in lines]
         _number(lines)
         days = sorted(l.ts[:10] for l in lines if l.ts)
         out.append(Source("slack", f"{channel.name}-{week}" if week else channel.name, channel.title,
@@ -123,9 +124,15 @@ def load_slack(path: Path) -> Source:
         for u in json.loads(users_file.read_text()):
             profile = u.get("profile") or {}
             names[u["id"]] = u.get("real_name") or profile.get("real_name") or u.get("name", u["id"])
+    channel = path.name if path.is_dir() else path.parent.name
+    return slack_source(channel, messages, names)
 
+
+def slack_source(channel: str, messages: list[dict], names: dict[str, str], channel_id: str = "") -> Source:
+    """Slack messages (as the API or an export gives them) as one Source. With a channel_id, each line
+    remembers which message it came from."""
     # Keep each thread together: replies sit right after their parent, in time order.
-    messages.sort(key=lambda m: (float(m.get("thread_ts") or m.get("ts", 0)), float(m.get("ts", 0))))
+    messages = sorted(messages, key=lambda m: (float(m.get("thread_ts") or m.get("ts", 0)), float(m.get("ts", 0))))
 
     lines: list[Line] = []
     for msg in messages:
@@ -147,10 +154,10 @@ def load_slack(path: Path) -> Source:
         if msg.get("thread_ts") and msg.get("thread_ts") != msg.get("ts"):
             author += " (thread reply)"
         ts = datetime.fromtimestamp(float(msg["ts"])).strftime("%Y-%m-%d %H:%M") if msg.get("ts") else ""
-        lines.append(Line("", author, text.strip(), ts))
+        ref = f"{channel_id}:{msg['ts']}" if channel_id and msg.get("ts") else ""
+        lines.append(Line("", author, text.strip(), ts, ref))
     _number(lines)
 
-    channel = path.name if path.is_dir() else path.parent.name
     days = sorted(l.ts[:10] for l in lines if l.ts)
     return Source("slack", channel, f"#{channel}", days[0] if days else "", lines)
 
