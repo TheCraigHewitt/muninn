@@ -1,5 +1,5 @@
-from bruh.extract import ACTIVE_AT, Candidate, check
-from bruh.sources import UNKNOWN_SPEAKER, Line
+from muninn.extract import ACTIVE_AT, Candidate, check
+from muninn.sources import UNKNOWN_SPEAKER, Line
 
 
 def lines(*rows):

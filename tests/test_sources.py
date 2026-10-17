@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from bruh import sources
-from bruh.sources import UNKNOWN_SPEAKER, Line, Source
+from muninn import sources
+from muninn.sources import UNKNOWN_SPEAKER, Line, Source
 
 DATA = Path(__file__).parent / "data"
 

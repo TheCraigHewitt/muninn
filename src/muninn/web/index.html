@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bruh</title>
+<title>Muninn</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
 <style>
 :root {
@@ -122,8 +122,8 @@ mark { background: color-mix(in srgb, var(--accent) 30%, transparent); color: in
 <header>
   <div class="wrap">
     <div class="top">
-      <a class="brand" href="#/ask">bruh<span>.</span></a>
-      <div class="tagline">Your company talked about it. Bruh remembers.</div>
+      <a class="brand" href="#/ask">muninn<span>.</span></a>
+      <div class="tagline">Your company talked about it. Muninn remembers.</div>
       <div class="stats" id="stats"></div>
     </div>
     <nav id="nav">
@@ -188,7 +188,7 @@ const views = {
   async ask() {
     const examples = ["What have we decided recently?", "What is still open?", "Who has committed to what?", "What changed our minds this month?"];
     $("#view").innerHTML = `
-      <h1>Ask Bruh</h1><p class="sub">Answers come only from what was said, and every claim links to the exact words.</p>
+      <h1>Ask Muninn</h1><p class="sub">Answers come only from what was said, and every claim links to the exact words.</p>
       <form class="askbox" id="askform"><input id="q" placeholder="Why did we…? What did we decide about…? Who owns…?" autocomplete="off" autofocus>
       <button id="go">Ask</button></form>
       <div class="examples">${examples.map(e => `<button type="button">${esc(e)}</button>`).join("")}</div>
@@ -211,7 +211,7 @@ const views = {
   },
 
   async memories() {
-    $("#view").innerHTML = `<h1>Memories</h1><p class="sub">Everything Bruh has recorded, newest first.</p>
+    $("#view").innerHTML = `<h1>Memories</h1><p class="sub">Everything Muninn has recorded, newest first.</p>
       <div class="filters"><button class="chip" data-type="">all</button>${TYPES.map(t => `<button class="chip" data-type="${t}">${t}s</button>`).join("")}
       <input class="search" id="search" placeholder="Filter…" value="${esc(memFilter.q)}"></div><div id="list"></div>`;
     const draw = async () => {
@@ -247,7 +247,7 @@ const views = {
 
   async review() {
     const rows = await api("/api/memories?status=review");
-    $("#view").innerHTML = `<h1>Review</h1><p class="sub">Bruh wasn't sure enough to record these as settled. Confirm the ones that are right.</p>
+    $("#view").innerHTML = `<h1>Review</h1><p class="sub">Muninn wasn't sure enough to record these as settled. Confirm the ones that are right.</p>
       <div id="list">${rows.length ? rows.map(m => card(m, `<div class="why">${esc(m.confidence_reason)}</div>
         <div class="review-actions"><button class="btn yes" data-rule="${m.id}" data-approve="1">Yes, that's right</button>
         <button class="btn" data-rule="${m.id}" data-approve="">Not right</button></div>`)).join("") : `<div class="empty">All clear. Nothing waiting for review.</div>`}</div>`;
@@ -270,10 +270,10 @@ const views = {
       return;
     }
     const rows = await api("/api/sources");
-    $("#view").innerHTML = `<h1>Sources</h1><p class="sub">The conversations Bruh has read.</p>
+    $("#view").innerHTML = `<h1>Sources</h1><p class="sub">The conversations Muninn has read.</p>
       <table class="src">${rows.map(s => `<tr><td><a href="#/sources/${s.id}">${esc(s.title)}</a><div class="why">${s.kind === "meeting" ? "Meeting" : "Slack channel"} · ${plural(s.line_count, "line")}</div></td>
         <td class="why">${fmtDate(s.held_on)}</td><td class="why">${plural(s.memory_count, "memory").replace("memorys", "memories")}</td></tr>`).join("")}</table>
-      ${rows.length ? "" : `<div class="empty">Nothing ingested yet. Run <code>bruh ingest</code>.</div>`}`;
+      ${rows.length ? "" : `<div class="empty">Nothing ingested yet. Run <code>muninn ingest</code>.</div>`}`;
   },
 };
 
@@ -292,7 +292,7 @@ async function openMemory(id) {
     ${m.evidence.map(e => `<div class="ev"><q>${esc(e.quote)}</q><div class="from">${esc(e.author)} · ${esc(e.ts || fmtDate(e.held_on))} ·
       <a href="#/sources/${e.source_id}/${e.line_id}">${esc(e.source_title)} ${e.line_id}</a>${e.role === "support" ? " · came up again" : ""}</div></div>`).join("")}
     ${rel ? `<h4>Connected</h4>${rel}` : ""}
-    <h4>Why Bruh recorded it this way</h4><p class="why">${esc(m.confidence_reason)}</p>
+    <h4>Why Muninn recorded it this way</h4><p class="why">${esc(m.confidence_reason)}</p>
   </aside>`;
   const close = () => $("#drawer").innerHTML = "";
   $(".drawer .close").onclick = close; $(".drawer-bg").onclick = close;

@@ -4,19 +4,19 @@ Answers two items from TECH_SPEC "Still needs early validation". All sources wer
 
 ## Summary and recommendations
 
-**Slack.** Each deployment creates its own single-workspace Slack app from a manifest that Bruh ships, and does not distribute it.
+**Slack.** Each deployment creates its own single-workspace Slack app from a manifest that Muninn ships, and does not distribute it.
 
 - **Rate limits.** Slack says internal customer-built apps keep Tier 3 limits (50+ requests per minute, up to about 1,000 messages per page) on `conversations.history` and `conversations.replies`. The 1 request per minute, 15 messages per page limit applies only to apps commercially distributed outside the Marketplace.
 - **Bot scopes:** `channels:read`, `channels:history`, `users:read`. Add `channels:join` only if the bot should join allowlisted channels itself. The alternative is having an admin `/invite` it.
-- **What Bruh must never request:** `groups:*`, `im:*` or `mpim:*`.
+- **What Muninn must never request:** `groups:*`, `im:*` or `mpim:*`.
 - **Events to subscribe to:**
   - `message.channels`, which also delivers the `message_changed` and `message_deleted` subtypes
   - `channel_shared` and `channel_unshared`
   - `user_change`, `user_guest_status_changed` and `team_join`
   - Socket Mode works for installs that can't expose a public URL.
-- **Rejecting what Bruh must not ingest.** Reject any event whose `channel_type` isn't `"channel"`. Separately, reject channels where `conversations.info` shows `is_private`, `is_im`, `is_mpim`, `is_ext_shared` or `is_pending_ext_shared`.
+- **Rejecting what Muninn must not ingest.** Reject any event whose `channel_type` isn't `"channel"`. Separately, reject channels where `conversations.info` shows `is_private`, `is_im`, `is_mpim`, `is_ext_shared` or `is_pending_ext_shared`.
 - **Guests.** Detect them with `users.info` (`is_restricted` / `is_ultra_restricted`).
-- **Correction for TECH_SPEC (applied).** Sign in with Slack (scopes `openid profile email`) does not return guest status. Bruh must call `users.info` on the `sub` user ID after sign-in.
+- **Correction for TECH_SPEC (applied).** Sign in with Slack (scopes `openid profile email`) does not return guest status. Muninn must call `users.info` on the `sub` user ID after sign-in.
 
 **Google.** Register an OAuth client of user type **Internal** in a Google Cloud project owned by the deploying Workspace organization. The **organizer** of each Meeting Series grants per-user OAuth with offline access.
 
@@ -26,7 +26,7 @@ Answers two items from TECH_SPEC "Still needs early validation". All sources wer
   - Optional fallback for transcripts older than the 30-day Meet API window: `https://www.googleapis.com/auth/documents.readonly`. With it, read the transcript Doc by ID through the Docs API. This scope is sensitive, not restricted.
   - Avoid `drive.readonly`, and avoid `drive.meet.readonly` unless needed. Both are restricted.
 - **TECH_SPEC's original plan did not work (now corrected).** It read the transcript Doc using "minimal Drive and Calendar scopes". `drive.file` can't see files that Meet created, so Calendar plus `drive.file` is not enough.
-- **Better primary path: Meet API transcript entries.** They are structured and carry a participant reference that resolves to a Google user ID, which fits the "no name guessing" rule for speaker mapping. The catch is that they are deleted 30 days after the meeting ends, so Bruh must poll inside that window.
+- **Better primary path: Meet API transcript entries.** They are structured and carry a participant reference that resolves to a Google user ID, which fits the "no name guessing" rule for speaker mapping. The catch is that they are deleted 30 days after the meeting ends, so Muninn must poll inside that window.
 - Domain-wide delegation is an optional alternative for admins who prefer it. It needs super-admin setup and grants broader impersonation power.
 
 ---
@@ -47,7 +47,7 @@ Answers two items from TECH_SPEC "Still needs early validation". All sources wer
   - Source: [Changelog: rate limit changes for non-Marketplace apps](https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps/)
 - **Clarification (June 3, 2025):** "Any internal customer-built apps will maintain their existing rate limits." [Changelog: clarifying rate limit changes](https://docs.slack.dev/changelog/2025/06/03/rate-limits-clarity/)
 - **Terms context.** The same changelog summarizes the API Terms update: the Marketplace is "the only appropriate channel for commercially distributing apps … whether those apps are 'unlisted' … or provide a customer instructions for a templated custom app that connects to your product." [Changelog](https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps/)
-- **Implication for Bruh.** Bruh is open source, non-commercial and self-hosted, and each operator creates the app in their own workspace. That matches "internal customer-built" and gets Tier 3 limits. No page formally defines "internal customer-built" or "commercially distributed", though. See Unresolved.
+- **Implication for Muninn.** Muninn is open source, non-commercial and self-hosted, and each operator creates the app in their own workspace. That matches "internal customer-built" and gets Tier 3 limits. No page formally defines "internal customer-built" or "commercially distributed", though. See Unresolved.
 - **Backfill planning:**
   - **At Tier 3:** about 50 history pages per minute (200 to 999 messages per page), plus one `conversations.replies` call per thread. Thread replies are the bottleneck.
   - **If Slack ever treated an install as distributed:** about 15 messages per minute, and one thread page per minute.

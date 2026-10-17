@@ -1,4 +1,4 @@
-# Bruh | Developer Specification
+# Muninn | Developer Specification
 
 Architecture and implementation contract • v0.2 • October 2026
 
@@ -6,7 +6,7 @@ Architecture and implementation contract • v0.2 • October 2026
 
 ## Scope and system boundaries
 
-This is the reference implementation for Bruh v0.1. It is a self-hosted service for a single Organization and a single Slack Workspace, and it includes:
+This is the reference implementation for Muninn v0.1. It is a self-hosted service for a single Organization and a single Slack Workspace, and it includes:
 
 - a Slack connector for selected public channels
 - a Google Meet connector for **Meeting Series**
@@ -46,7 +46,7 @@ The model interface defines two roles. Each one can be pointed at a hosted or lo
 - **Grouping and triage model:** cheap, high-volume work. It groups messages into Discussions, classifies sincerity, and discards chatter. Most messages produce no Memory, so this model filters out most of the work.
 - **Extraction and answer model:** the work that needs heavier reasoning, namely extraction, reconciliation proposals and answer generation.
 
-Local models are optional. When **local-only mode** is on, both roles must point at local endpoints and Bruh makes no outbound model or telemetry calls. A test enforces this.
+Local models are optional. When **local-only mode** is on, both roles must point at local endpoints and Muninn makes no outbound model or telemetry calls. A test enforces this.
 
 ## Data contracts
 
@@ -89,7 +89,7 @@ Local models are optional. When **local-only mode** is on, both roles must point
   - Types: `decision, rationale, fact, commitment, proposal, question`.
   - `statement` never changes after insert.
   - All of a Memory's Evidence shares its `access_scope_id` (ADR-0001).
-  - `valid_from` and `valid_to` are when the claim holds in the world. `recorded_at` is when Bruh recorded it.
+  - `valid_from` and `valid_to` are when the claim holds in the world. `recorded_at` is when Muninn recorded it.
   - Commitments add `owner_author_kind, owner_author_id`.
 - **Memory status event:** `memory_id, status, effective_at, recorded_at, cause (edge_id | admin_ruling_id | source_edit | extractor_revision)`.
   - Statuses: `proposed, active, disputed, superseded, resolved, withdrawn`.
@@ -227,7 +227,7 @@ The thresholds are starting values, calibrated in Phase 4.
 **Slack bot:**
 
 - When mentioned in a channel, it answers in the channel, limited to the channel's audience.
-- A `/bruh` slash command gives an ephemeral answer using the asker's full access.
+- A `/muninn` slash command gives an ephemeral answer using the asker's full access.
 
 ## Connectors
 
@@ -237,7 +237,7 @@ The thresholds are starting values, calibrated in Phase 4.
 
 ## Security and privacy implementation
 
-- **Sign-in:** Sign in with Slack (OpenID Connect, `openid profile email`) for human Principals. OIDC doesn't reveal guest status, so after sign-in Bruh checks the workspace ID claim and calls `users.info` (`is_restricted`, `is_ultra_restricted`) to confirm the user is a full member. Guests can't get a Principal. One bootstrap admin account is used for setup. Agents use admin-issued, revocable tokens. The Slack bot verifies Slack's request signatures and maps Slack IDs to Principals.
+- **Sign-in:** Sign in with Slack (OpenID Connect, `openid profile email`) for human Principals. OIDC doesn't reveal guest status, so after sign-in Muninn checks the workspace ID claim and calls `users.info` (`is_restricted`, `is_ultra_restricted`) to confirm the user is a full member. Guests can't get a Principal. One bootstrap admin account is used for setup. Agents use admin-issued, revocable tokens. The Slack bot verifies Slack's request signatures and maps Slack IDs to Principals.
 - Track the Access Scope behind every Memory. When source permissions change, revoke access through derived indexes and invalidate caches, including the Topic label cache.
 - Treat every piece of outside text, Agent Reports included, as untrusted. Defend against prompt injection, and never follow instructions that come from a connector.
 - Encryption at rest depends on how the host's storage is configured. Support external secrets and TLS. Logs record identifiers, never the text of conversations.

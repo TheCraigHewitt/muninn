@@ -1,15 +1,15 @@
-"""Bruh in Slack: reads the public channels it's invited to, and answers when asked.
+"""Muninn in Slack: reads the public channels it's invited to, and answers when asked.
 
 It connects over Socket Mode, so it needs no public URL, only two tokens: SLACK_BOT_TOKEN (xoxb-…)
 and SLACK_APP_TOKEN (xapp-…). See docs/SLACK.md for setting up the app.
 
-Reading: each message in a channel Bruh is a member of is kept as it arrives. Once the channel has
+Reading: each message in a channel Muninn is a member of is kept as it arrives. Once the channel has
 been quiet for a while, or the oldest message has waited long enough, the waiting messages are read
-as one conversation, split by week, and reconciled like any other. Questions asked of Bruh and
-Bruh's own replies are never read as conversation. Private, shared (Slack Connect) and direct
+as one conversation, split by week, and reconciled like any other. Questions asked of Muninn and
+Muninn's own replies are never read as conversation. Private, shared (Slack Connect) and direct
 conversations are never read at all.
 
-Answering: @bruh in a channel answers in a thread, for everyone there. /bruh answers privately.
+Answering: @muninn in a channel answers in a thread, for everyone there. /muninn answers privately.
 """
 
 import json
@@ -38,14 +38,14 @@ CREATE TABLE IF NOT EXISTS slack_messages (
 CREATE TABLE IF NOT EXISTS slack_users (id TEXT PRIMARY KEY, name TEXT NOT NULL);
 """
 
-QUIET_SECONDS = 60 * float(os.environ.get("BRUH_SLACK_QUIET_MINUTES", 30))
+QUIET_SECONDS = 60 * float(os.environ.get("MUNINN_SLACK_QUIET_MINUTES", 30))
 MAX_WAIT_SECONDS = 4 * 3600
-BACKFILL_DAYS = float(os.environ.get("BRUH_SLACK_BACKFILL_DAYS", 30))
+BACKFILL_DAYS = float(os.environ.get("MUNINN_SLACK_BACKFILL_DAYS", 30))
 CHANNEL_RECHECK_SECONDS = 3600
 NOT_READABLE = ("is_private", "is_im", "is_mpim", "is_group", "is_ext_shared", "is_pending_ext_shared", "is_archived")
 
-HELP = ("Ask me what the team decided, why, or who's on the hook. Like `@bruh what did we decide about pricing?`\n"
-        "`/bruh your question` answers just for you.")
+HELP = ("Ask me what the team decided, why, or who's on the hook. Like `@muninn what did we decide about pricing?`\n"
+        "`/muninn your question` answers just for you.")
 THINKING = "_checking the receipts…_"
 MAX_RECEIPTS = 12
 
@@ -60,10 +60,10 @@ class SlackConnector:
         self.channels: dict[str, tuple[float, dict | None]] = {}
         self._flush_store: Store | None = None
 
-    # ---- which channels Bruh may read ----
+    # ---- which channels Muninn may read ----
 
     def channel(self, channel_id: str) -> dict | None:
-        """The channel's info if Bruh may read it (public, not shared outside, not archived), else None."""
+        """The channel's info if Muninn may read it (public, not shared outside, not archived), else None."""
         checked = self.channels.get(channel_id)
         if checked and time.time() - checked[0] < CHANNEL_RECHECK_SECONDS:
             return checked[1]
@@ -95,7 +95,7 @@ class SlackConnector:
             self.keep(channel_id, event)
 
     def ignored(self, msg: dict) -> bool:
-        """Bruh's own replies and questions put to Bruh aren't part of the conversation."""
+        """Muninn's own replies and questions put to Muninn aren't part of the conversation."""
         return (msg.get("subtype") in SKIPPED_SUBTYPES or msg.get("user") == self.bot_user
                 or (self.bot_id is not None and msg.get("bot_id") == self.bot_id)
                 or f"<@{self.bot_user}>" in msg.get("text", ""))
@@ -110,14 +110,14 @@ class SlackConnector:
         self.store.commit()
 
     def edit(self, channel_id: str, msg: dict) -> None:
-        """An edit before Bruh has read the message just replaces it. (Edits after that aren't followed yet.)"""
+        """An edit before Muninn has read the message just replaces it. (Edits after that aren't followed yet.)"""
         row = self._waiting(channel_id, msg["ts"])
         if row is not None and not self.ignored(msg):
             msg = {**msg, "reactions": json.loads(row["raw"]).get("reactions", [])}
             self._save(channel_id, msg)
 
     def forget(self, channel_id: str, ts: str) -> None:
-        """Deleted in Slack means deleted in Bruh: the message, every quote of it, and Memories resting on it."""
+        """Deleted in Slack means deleted in Muninn: the message, every quote of it, and Memories resting on it."""
         self.store.db.execute("DELETE FROM slack_messages WHERE channel_id = ? AND ts = ?", (channel_id, ts))
         gone = self.store.erase_line(f"{channel_id}:{ts}")
         if gone:
@@ -170,8 +170,8 @@ class SlackConnector:
                 self.backfill(ch["id"])
 
     def backfill(self, channel_id: str) -> int:
-        """Keep recent history Bruh hasn't seen: since the last thing it read from this channel
-        (live or from an export), going back at most BRUH_SLACK_BACKFILL_DAYS."""
+        """Keep recent history Muninn hasn't seen: since the last thing it read from this channel
+        (live or from an export), going back at most MUNINN_SLACK_BACKFILL_DAYS."""
         info = self.channel(channel_id)
         if info is None:
             return 0
@@ -261,7 +261,7 @@ class SlackConnector:
             return self.format(ask(self.llm, self.store, question))
         except Exception as e:
             self.log(f"answering failed: {e}")
-            return "Bruh tripped over something and couldn't answer. Try again in a minute."
+            return "Muninn tripped over something and couldn't answer. Try again in a minute."
 
     def format(self, result: dict) -> str:
         """The answer in Slack's markup, with numbered receipts that quote the original words."""
@@ -315,7 +315,7 @@ def pretty_date(day: str) -> str:
 
 
 def build_app(llm: LLM, db_path: Path, bot_token: str, log, client=None):
-    """The Bolt app with Bruh's listeners, and the connector behind them."""
+    """The Bolt app with Muninn's listeners, and the connector behind them."""
     from slack_bolt import App
     from slack_sdk.http_retry.builtin_handlers import RateLimitErrorRetryHandler
 
@@ -329,7 +329,7 @@ def build_app(llm: LLM, db_path: Path, bot_token: str, log, client=None):
         placeholder = client.chat_postMessage(channel=event["channel"], thread_ts=thread, text=THINKING)
         client.chat_update(channel=event["channel"], ts=placeholder["ts"], text=bot.answer(event.get("text", "")))
 
-    @app.command("/bruh")
+    @app.command("/muninn")
     def command(ack, command, respond):
         question = command.get("text", "").strip()
         ack(response_type="ephemeral", text=THINKING if question else HELP)
@@ -367,7 +367,7 @@ def run(llm: LLM, db_path: Path, block: bool = True, log=None) -> None:
                 log(f"reading waiting messages failed: {e}")
             time.sleep(60)
 
-    threading.Thread(target=reader, name="bruh-slack-reader", daemon=True).start()
+    threading.Thread(target=reader, name="muninn-slack-reader", daemon=True).start()
     handler = SocketModeHandler(app, app_token)
-    log("connected. Invite me to a channel with /invite @bruh, then ask me something.")
+    log("connected. Invite me to a channel with /invite @muninn, then ask me something.")
     handler.start() if block else handler.connect()

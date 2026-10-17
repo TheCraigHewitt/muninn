@@ -1,7 +1,7 @@
 import os
 import time
 
-from bruh.watch import Watcher
+from muninn.watch import Watcher
 from test_ingest import extraction, mem
 
 TRANSCRIPT = "Ana: We're going with a Friday launch.\nBen: Sounds good.\n"

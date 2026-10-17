@@ -1,6 +1,6 @@
 # Each Memory draws its Evidence from exactly one Access Scope
 
-A Memory may only cite Evidence from a single Access Scope. When a second scope backs up the same claim (for example, a public Slack Decision that is also confirmed in a restricted meeting transcript), Bruh records a separate Memory in that scope and links the two with a Supports edge, rather than attaching mixed-scope Evidence to one Memory. Whether a Principal can see a Memory then comes down to one check on its scope, and they see an edge only if they can see the Memories at both ends. This keeps access leaks testable without any LLM judgment at query time.
+A Memory may only cite Evidence from a single Access Scope. When a second scope backs up the same claim (for example, a public Slack Decision that is also confirmed in a restricted meeting transcript), Muninn records a separate Memory in that scope and links the two with a Supports edge, rather than attaching mixed-scope Evidence to one Memory. Whether a Principal can see a Memory then comes down to one check on its scope, and they see an edge only if they can see the Memories at both ends. This keeps access leaks testable without any LLM judgment at query time.
 
 ## Considered Options
 

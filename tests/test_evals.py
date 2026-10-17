@@ -1,7 +1,7 @@
 import pytest
 
-from bruh.evals import check
-from bruh.extract import Candidate, Extraction
+from muninn.evals import check
+from muninn.extract import Candidate, Extraction
 
 
 def test_checks():

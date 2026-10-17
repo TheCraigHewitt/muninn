@@ -1,13 +1,13 @@
-# Bruh
+# Muninn
 
-Bruh is open-source organizational memory: it turns authorized Slack discussions, meeting transcripts and Agent Reports into a cited, evolving record of what an organization decided, committed to, knows, proposed and still has open. Bruh is a shared context layer for both people and Agents. It holds durable memory only, never Agents' working state.
+Muninn is open-source organizational memory: it turns authorized Slack discussions, meeting transcripts and Agent Reports into a cited, evolving record of what an organization decided, committed to, knows, proposed and still has open. Muninn is a shared context layer for both people and Agents. It holds durable memory only, never Agents' working state.
 
 ## Language
 
 ### Installation and access
 
 **Organization**:
-The single company whose conversations one Bruh install remembers.
+The single company whose conversations one Muninn install remembers.
 _Avoid_: Tenant, company, account
 
 **Workspace**:
@@ -15,7 +15,7 @@ The one Slack workspace connected to an Organization.
 _Avoid_: Team, tenant
 
 **Principal**:
-Someone allowed to query Bruh, linked to a full (non-guest) member of the Workspace.
+Someone allowed to query Muninn, linked to a full (non-guest) member of the Workspace.
 _Avoid_: User account, member
 
 **Agent**:
@@ -37,7 +37,7 @@ _Avoid_: ACL, permission group
 ### Sources and evidence
 
 **Source**:
-One original item that Bruh learns from: a single Slack message, one uploaded transcript, one Agent Report, or one Admin Ruling.
+One original item that Muninn learns from: a single Slack message, one uploaded transcript, one Agent Report, or one Admin Ruling.
 _Avoid_: Document, record
 
 **Agent Report**:
@@ -109,7 +109,7 @@ The status of a Memory whose Evidence was edited away, so its Source no longer s
 _Avoid_: Retracted, invalidated
 
 **Confidence**:
-How sure Bruh is that a Memory's type and statement correctly read its Evidence. It decides whether the Memory is recorded, goes to the Review Queue, or becomes active, and is never shown in answers as a number.
+How sure Muninn is that a Memory's type and statement correctly read its Evidence. It decides whether the Memory is recorded, goes to the Review Queue, or becomes active, and is never shown in answers as a number.
 
 **Commitment Owner**:
 The Author (a Person or an Agent) who undertook a Commitment.

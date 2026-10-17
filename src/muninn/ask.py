@@ -6,7 +6,7 @@ from .llm import LLM
 from .store import Store
 
 SYSTEM = """You answer questions about an organization using ONLY its memory records below, for a tool
-called Bruh. Each record has an id like M12, a type, a status, a date and a topic.
+called Muninn. Each record has an id like M12, a type, a status, a date and a topic.
 
 Rules:
 - Cite every claim with the ids of the records it rests on, inline, like [M12] or [M12][M40].
@@ -34,7 +34,7 @@ MAX_RECORDS = 400
 def ask(llm: LLM, store: Store, question: str) -> dict:
     memories = store.memories()
     if not memories:
-        return {"answer": "Bruh doesn't remember anything yet. Ingest some conversations first.", "memories": []}
+        return {"answer": "Muninn doesn't remember anything yet. Ingest some conversations first.", "memories": []}
     if len(memories) > MAX_RECORDS:
         words = _words(question)
         memories.sort(key=lambda m: len(words & _words(f"{m['statement']} {m['topic']} {m['owner']}")), reverse=True)

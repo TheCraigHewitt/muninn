@@ -23,7 +23,7 @@ class Ruling(BaseModel):
 
 
 def create_app(store: Store, llm: LLM) -> FastAPI:
-    app = FastAPI(title="Bruh", docs_url=None, redoc_url=None)
+    app = FastAPI(title="Muninn", docs_url=None, redoc_url=None)
 
     @app.get("/", include_in_schema=False)
     def page():

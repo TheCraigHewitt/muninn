@@ -1,7 +1,7 @@
 import pytest
 
-from bruh.llm import LLM, Usage
-from bruh.store import Store
+from muninn.llm import LLM, Usage
+from muninn.store import Store
 
 
 class FakeLLM(LLM):

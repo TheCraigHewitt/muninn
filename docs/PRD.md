@@ -1,4 +1,4 @@
-# Bruh | Product Requirements Document
+# Muninn | Product Requirements Document
 
 Open-source organizational memory • PRD v0.2 • October 2026
 
@@ -6,11 +6,11 @@ Open-source organizational memory • PRD v0.2 • October 2026
 
 ## Executive summary
 
-Bruh is an open-source, self-hostable organizational memory service. It continuously turns authorized Slack discussions, meeting transcripts and **Agent Reports** into a cited, evolving record of **Decisions**, **Rationale**, **Commitments**, **Facts**, **Proposals** and open **Questions**. People and AI **Agents** can ask what was decided, why, and what changed. Agents can also contribute what they learn.
+Muninn is an open-source, self-hostable organizational memory service. It continuously turns authorized Slack discussions, meeting transcripts and **Agent Reports** into a cited, evolving record of **Decisions**, **Rationale**, **Commitments**, **Facts**, **Proposals** and open **Questions**. People and AI **Agents** can ask what was decided, why, and what changed. Agents can also contribute what they learn.
 
-Positioning: "Your company talked about it. Bruh remembers."
+Positioning: "Your company talked about it. Muninn remembers."
 
-Bruh is a **shared context layer for people and Agents**. Teams talking in Slack and meetings is the first use case. A group of Agents that need durable, trustworthy, permission-aware organizational context is potentially a much larger market. v0.1 proves the human use case and builds the Agent model into the core, so it doesn't have to be retrofitted later.
+Muninn is a **shared context layer for people and Agents**. Teams talking in Slack and meetings is the first use case. A group of Agents that need durable, trustworthy, permission-aware organizational context is potentially a much larger market. v0.1 proves the human use case and builds the Agent model into the core, so it doesn't have to be retrofitted later.
 
 Strategy: open source first (Apache-2.0). Prove usefulness and trust in a real pilot organization and build community adoption. A commercial hosted service may come later.
 
@@ -42,12 +42,12 @@ Differentiator: a model of organizational decisions that tracks change over time
 ## Product principles
 
 - **No manual upkeep** after authorized connections and initial setup. Explicit **Markers** are optional helpers, never required.
-- **Citations first.** Every substantive claim can be traced to permissible Evidence. Bruh never records a Memory without Evidence.
-- **History is preserved.** Bruh never silently overwrites past positions. Changes are new Memories linked by **Supersedes**, and corrections are citable **Admin Rulings**. The one deliberate exception is deletion: when a Source is deleted, everything derived from it is erased (ADR-0003).
+- **Citations first.** Every substantive claim can be traced to permissible Evidence. Muninn never records a Memory without Evidence.
+- **History is preserved.** Muninn never silently overwrites past positions. Changes are new Memories linked by **Supersedes**, and corrections are citable **Admin Rulings**. The one deliberate exception is deletion: when a Source is deleted, everything derived from it is erased (ADR-0003).
 - **Only people make Decisions.** Jokes, sarcasm, hypotheticals and Agent statements never become Decisions (ADR-0007).
 - **Access is enforced at every layer**: ingestion, storage, retrieval and output. An answer is never wider than its **Answer Audience** (ADR-0004), and a restricted Memory never leaks through a status, Topic label or Agent Report (ADR-0002, ADR-0008).
 - **No DMs**, including Slack direct and group messages.
-- **Durable memory only.** Bruh stores what will still matter next week, not Agents' working state (ADR-0006).
+- **Durable memory only.** Muninn stores what will still matter next week, not Agents' working state (ADR-0006).
 - **Works fully when self-hosted.** No mandatory hosted account or proprietary API. Model providers can be swapped, and local inference is supported.
 
 ## MVP scope: v0.1
@@ -83,14 +83,14 @@ Differentiator: a model of organizational decisions that tracks change over time
 
 ## Critical user journeys
 
-1. An admin installs Bruh, connects Slack with least-privilege permissions, and chooses eligible public channels.
-2. An admin opts in the weekly team meeting as a Meeting Series scoped to the whole Workspace. Every following week's transcript arrives automatically. One week's meeting gets into something sensitive, and the admin deletes it, which erases it from Bruh entirely.
-3. An admin uploads a one-off transcript, listing the attendees as its Access Scope. Bruh extracts Memories and cites timestamped snippets.
+1. An admin installs Muninn, connects Slack with least-privilege permissions, and chooses eligible public channels.
+2. An admin opts in the weekly team meeting as a Meeting Series scoped to the whole Workspace. Every following week's transcript arrives automatically. One week's meeting gets into something sensitive, and the admin deletes it, which erases it from Muninn entirely.
+3. An admin uploads a one-off transcript, listing the attendees as its Access Scope. Muninn extracts Memories and cites timestamped snippets.
 4. A user asks "Why did we reject the public API?" They get the latest conclusion they're allowed to see, its Rationale, and links to the supporting messages.
-5. A later Discussion reverses an old Decision. Bruh keeps the history and points to the superseding Evidence.
-6. Someone posts "oh sure, let's rewrite it all in Rust 🙃". Bruh records nothing.
+5. A later Discussion reverses an old Decision. Muninn keeps the history and points to the superseding Evidence.
+6. Someone posts "oh sure, let's rewrite it all in Rust 🙃". Muninn records nothing.
 7. A user loses access to a channel. Its Evidence and the Memories derived from it disappear from that user's results.
-8. A coding Agent queries Bruh before changing the webhook system, learns that v1 webhooks are scheduled for deprecation, and files an Agent Report with its findings and a recommendation. The recommendation becomes a Proposal. It becomes a Decision only when a person endorses it.
+8. A coding Agent queries Muninn before changing the webhook system, learns that v1 webhooks are scheduled for deprecation, and files an Agent Report with its findings and a recommendation. The recommendation becomes a Proposal. It becomes a Decision only when a person endorses it.
 9. A user Flags a Memory that misread a hypothetical. An admin withdraws it with an Admin Ruling, and the correction is visible and citable.
 
 ## Functional requirements
@@ -127,7 +127,7 @@ Differentiator: a model of organizational decisions that tracks change over time
 
 ## Success metrics and acceptance criteria
 
-- **Pilot:** replay 90 days of permitted Slack history from the pilot organization, plus its weekly team meeting as a Meeting Series and a representative set of transcripts. Connect at least one real Agent that reads Bruh and files Agent Reports.
+- **Pilot:** replay 90 days of permitted Slack history from the pilot organization, plus its weekly team meeting as a Meeting Series and a representative set of transcripts. Connect at least one real Agent that reads Muninn and files Agent Reports.
 - Curate at least 20 answerable questions, plus negative tests and permission tests. Judge correctness, citations, change tracking and refusals manually.
 - **Provisional release gates:** at least 85% fully supported answers on the curated answerable questions, at least 95% correct citations, zero confirmed unauthorized disclosures, and no high-confidence false reversals in a dedicated reversal test suite. Calibrate the thresholds after baseline testing.
 - **Any single failure of the following blocks release:**
@@ -149,10 +149,10 @@ Differentiator: a model of organizational decisions that tracks change over time
 ## Risks, mitigations and open questions
 
 - **Invented or premature decisions** (main risk). Mitigations: the Proposal/Decision distinction, the sincerity check, Decisions only from people, Confidence routing, the Review Queue, and release-blocking sarcasm tests.
-- **Access leaks through derived data.** Mitigations: Memories that each belong to one scope (ADR-0001), status and Topic labels worked out per viewer (ADR-0002), Answer Audience (ADR-0004), and the Agent Report scope ceiling (ADR-0008). Bruh can't see what an Agent learned outside Bruh, and the guide says so.
+- **Access leaks through derived data.** Mitigations: Memories that each belong to one scope (ADR-0001), status and Topic labels worked out per viewer (ADR-0002), Answer Audience (ADR-0004), and the Agent Report scope ceiling (ADR-0008). Muninn can't see what an Agent learned outside Muninn, and the guide says so.
 - **Discussion grouping is hard.** A model does the grouping, the gap and size limits are configurable, and grouping can be revised as messages arrive.
-- **Matching identities across sources.** Bruh starts with explicit mappings and conservative defaults. Transcript speakers are never matched to people by name guessing.
-- **Recording consent.** Bruh doesn't record anything itself. It only ingests transcripts the meeting platform already made. The setup guide recommends adding a notice to calendar invites for each Meeting Series.
+- **Matching identities across sources.** Muninn starts with explicit mappings and conservative defaults. Transcript speakers are never matched to people by name guessing.
+- **Recording consent.** Muninn doesn't record anything itself. It only ingests transcripts the meeting platform already made. The setup guide recommends adding a notice to calendar invites for each Meeting Series.
 - **Open:**
   - Confidence thresholds (starting at 0.6 and 0.85)
   - Discussion gap and size defaults (starting at 2 hours and 200 messages)

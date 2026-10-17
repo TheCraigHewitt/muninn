@@ -2,7 +2,7 @@
 
 Point it at wherever transcripts land (a meeting-notes app's export folder, a synced Drive folder).
 A file is read once it has stopped changing, so a transcript still being written isn't read half
-done. Files Bruh has already read are skipped, so restarting the watcher is safe.
+done. Files Muninn has already read are skipped, so restarting the watcher is safe.
 """
 
 import time

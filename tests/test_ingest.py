@@ -1,5 +1,5 @@
-from bruh.ingest import ingest_source, review
-from bruh.sources import Line, Source
+from muninn.ingest import ingest_source, review
+from muninn.sources import Line, Source
 
 
 def source(day, *rows, name="sync"):

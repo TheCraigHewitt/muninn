@@ -28,7 +28,7 @@ class Line:
     author: str
     text: str
     ts: str = ""  # "YYYY-MM-DD HH:MM" for Slack, "HH:MM:SS" offsets for transcripts, or ""
-    ref: str = ""  # where it lives outside Bruh: "CHANNEL_ID:TS" for live Slack messages
+    ref: str = ""  # where it lives outside Muninn: "CHANNEL_ID:TS" for live Slack messages
 
 
 @dataclass

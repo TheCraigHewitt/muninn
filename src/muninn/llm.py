@@ -1,4 +1,4 @@
-"""The one place Bruh talks to a model.
+"""The one place Muninn talks to a model.
 
 Every call asks for JSON matching a schema. Responses are cached on disk by a
 hash of the request, so re-running an ingest or an eval costs nothing, and
@@ -33,7 +33,7 @@ class LLM:
     """JSON-in, JSON-out model calls with a disk cache and a usage log."""
 
     def __init__(self, data_dir: Path, model: str | None = None, effort: str = "medium", client=None):
-        self.model = model or os.environ.get("BRUH_MODEL", DEFAULT_MODEL)
+        self.model = model or os.environ.get("MUNINN_MODEL", DEFAULT_MODEL)
         self.effort = effort
         self.cache_dir = data_dir / "cache"
         self.usage_log = data_dir / "usage.jsonl"

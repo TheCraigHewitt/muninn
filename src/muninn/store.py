@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS lines (
     ts TEXT NOT NULL,
     author TEXT NOT NULL,
     text TEXT NOT NULL,
-    ref TEXT NOT NULL DEFAULT '',  -- where the line lives outside Bruh, e.g. "C0123:1712345678.000100" for Slack
+    ref TEXT NOT NULL DEFAULT '',  -- where the line lives outside Muninn, e.g. "C0123:1712345678.000100" for Slack
     PRIMARY KEY (source_id, line_id)
 );
 CREATE TABLE IF NOT EXISTS topics (

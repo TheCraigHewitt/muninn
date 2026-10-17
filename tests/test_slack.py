@@ -1,4 +1,4 @@
-from bruh.slack import QUIET_SECONDS, SlackConnector
+from muninn.slack import QUIET_SECONDS, SlackConnector
 from test_ingest import extraction, mem
 
 T0 = 1772611200.0  # 2026-03-04
@@ -13,7 +13,7 @@ class FakeSlack:
         self.history, self.replies, self.asked_oldest = list(history), replies or {}, []
 
     def auth_test(self):
-        return {"user_id": "UBRUH", "bot_id": "BBRUH", "url": "https://team.slack.com/", "user": "bruh"}
+        return {"user_id": "UMUNINN", "bot_id": "BMUNINN", "url": "https://team.slack.com/", "user": "muninn"}
 
     def conversations_info(self, channel):
         return {"channel": self.chans[channel]}
@@ -54,8 +54,8 @@ def test_keeps_only_public_channel_conversation(tmp_path):
     b.on_message({**msg(1, "dm"), "channel_type": "im"})
     b.on_message({**msg(2, "private"), "channel": "C2"})
     b.on_message({**msg(3, "shared"), "channel": "C3"})
-    b.on_message(msg(4, "<@UBRUH> what did we decide?"))
-    b.on_message(msg(5, "Here's what I found", user="UBRUH", bot_id="BBRUH"))
+    b.on_message(msg(4, "<@UMUNINN> what did we decide?"))
+    b.on_message(msg(5, "Here's what I found", user="UMUNINN", bot_id="BMUNINN"))
     b.on_message(msg(6, "joined", subtype="channel_join"))
     assert waiting(b) == [f"{T0:.6f}"]
 
@@ -100,7 +100,7 @@ def test_deleting_in_slack_deletes_from_memory(tmp_path, fake):
     assert line["text"] == ""
 
 
-def test_editing_before_bruh_reads_replaces_and_a_deleted_thread_parent_goes(tmp_path):
+def test_editing_before_muninn_reads_replaces_and_a_deleted_thread_parent_goes(tmp_path):
     b = bot(tmp_path)
     b.on_message(msg(0, "We're going with $6."))
     b.on_message({**msg(1, ""), "subtype": "message_changed", "message": msg(0, "We're going with $5.")})
@@ -111,8 +111,8 @@ def test_editing_before_bruh_reads_replaces_and_a_deleted_thread_parent_goes(tmp
     assert waiting(b) == []
 
 
-def test_backfill_starts_where_bruh_left_off_and_follows_threads(tmp_path, fake, monkeypatch):
-    monkeypatch.setattr("bruh.slack.BACKFILL_DAYS", 10_000)
+def test_backfill_starts_where_muninn_left_off_and_follows_threads(tmp_path, fake, monkeypatch):
+    monkeypatch.setattr("muninn.slack.BACKFILL_DAYS", 10_000)
     history = [msg(10, "Parent", reply_count=1), msg(20, "Another")]
     replies = {f"{T0 + 10:.6f}": [msg(10, "Parent"), msg(30, "A reply", user="U2", thread_ts=f"{T0 + 10:.6f}")]}
     b = bot(tmp_path, fake(), history=history, replies=replies)
@@ -140,7 +140,7 @@ def test_answers_read_well_in_slack(tmp_path):
 
 
 def test_help_when_there_is_no_question(tmp_path):
-    assert "/bruh" in bot(tmp_path).answer("<@UBRUH>  ")
+    assert "/muninn" in bot(tmp_path).answer("<@UMUNINN>  ")
 
 
 def stub_slack_api(monkeypatch, sent):
@@ -179,13 +179,13 @@ def event(e):
 
 
 def test_bolt_wiring_answers_mentions_and_keeps_messages(tmp_path, fake, monkeypatch):
-    from bruh.slack import build_app
+    from muninn.slack import build_app
 
-    monkeypatch.setattr("bruh.slack.ask", lambda llm, store, q: {"answer": f"You asked: {q}", "memories": []})
+    monkeypatch.setattr("muninn.slack.ask", lambda llm, store, q: {"answer": f"You asked: {q}", "memories": []})
     sent = []
     app, b = build_app(fake(), tmp_path / "test.db", "xoxb-test", log=lambda m: None,
                        client=stub_slack_api(monkeypatch, sent))
-    dispatch(app, event({"type": "app_mention", "user": "U1", "text": "<@UBRUH> pricing?", "ts": "5.0", "channel": "C1"}))
+    dispatch(app, event({"type": "app_mention", "user": "U1", "text": "<@UMUNINN> pricing?", "ts": "5.0", "channel": "C1"}))
     dispatch(app, event(msg(0, "We're going with $5.")))
     eventually(lambda: [(m, a.get("text")) for m, a in sent if m.startswith("chat.")] ==
                [("chat.postMessage", "_checking the receipts…_"), ("chat.update", "You asked: pricing?")])

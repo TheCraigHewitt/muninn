@@ -1,8 +1,8 @@
 from fastapi.testclient import TestClient
 
-from bruh.ask import ask
-from bruh.ingest import ingest_source
-from bruh.web.app import create_app
+from muninn.ask import ask
+from muninn.ingest import ingest_source
+from muninn.web.app import create_app
 from test_ingest import FIRST, extraction, mem
 
 
@@ -26,7 +26,7 @@ def test_empty_memory_says_so(fake, store):
 def test_web_api(fake, store):
     llm = seeded(fake, store, {"answer": "Friday [M1].", "cited": [1]})
     web = TestClient(create_app(store, llm))
-    assert "bruh" in web.get("/").text
+    assert "muninn" in web.get("/").text
     assert web.get("/api/stats").json()["decisions"] == 1
     assert web.get("/api/memories?type=decision").json()[0]["statement"] == "Launch on Friday."
     assert web.get("/api/memories?q=nothing-matches").json() == []

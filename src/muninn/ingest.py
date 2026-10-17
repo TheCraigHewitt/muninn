@@ -11,7 +11,7 @@ from .extract import Candidate, Extraction, extract
 from .llm import LLM
 from .store import Store
 
-RECONCILE_SYSTEM = """You maintain Bruh, an organization's memory of what it decided, why, who committed to
+RECONCILE_SYSTEM = """You maintain Muninn, an organization's memory of what it decided, why, who committed to
 what, and what is still open. New candidate memories have just been read from one conversation. Compare
 each candidate with the EXISTING memories and choose one action:
 

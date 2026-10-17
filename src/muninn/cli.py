@@ -1,14 +1,14 @@
-"""bruh: command line entry point.
+"""muninn: command line entry point.
 
-    bruh ingest PATH...     read transcripts (.txt) and Slack export folders into memory
-    bruh ask "QUESTION"     answer from memory, with citations
-    bruh serve              open the web app at http://127.0.0.1:8765
+    muninn ingest PATH...     read transcripts (.txt) and Slack export folders into memory
+    muninn ask "QUESTION"     answer from memory, with citations
+    muninn serve              open the web app at http://127.0.0.1:8765
                             (--slack also runs the Slack bot, --watch DIR the folder watcher)
-    bruh slack              run the Slack bot: read invited channels, answer @bruh and /bruh
-    bruh watch DIR...       read new meeting transcripts as they appear in these folders
-    bruh review             list memories waiting for a person to confirm them
-    bruh eval               run the extraction evals in eval/fixtures
-    bruh spend              show model usage and estimated cost
+    muninn slack              run the Slack bot: read invited channels, answer @muninn and /muninn
+    muninn watch DIR...       read new meeting transcripts as they appear in these folders
+    muninn review             list memories waiting for a person to confirm them
+    muninn eval               run the extraction evals in eval/fixtures
+    muninn spend              show model usage and estimated cost
 """
 
 import argparse
@@ -24,13 +24,13 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def data_dir() -> Path:
-    path = Path(os.environ.get("BRUH_DATA", ROOT / "data"))
+    path = Path(os.environ.get("MUNINN_DATA", ROOT / "data"))
     path.mkdir(parents=True, exist_ok=True)
     return path
 
 
 def open_store() -> Store:
-    return Store(data_dir() / "bruh.db")
+    return Store(data_dir() / "muninn.db")
 
 
 def check_folders(folders: list[Path]) -> None:
@@ -40,7 +40,7 @@ def check_folders(folders: list[Path]) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(prog="bruh", description="Your company talked about it. Bruh remembers.")
+    parser = argparse.ArgumentParser(prog="muninn", description="Your company talked about it. Muninn remembers.")
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("ingest", help="read conversations into memory")
     p.add_argument("paths", nargs="+", type=Path)
@@ -91,18 +91,18 @@ def main(argv: list[str] | None = None) -> None:
         if args.slack:
             from .slack import run
 
-            run(LLM(data_dir()), data_dir() / "bruh.db", block=False)
+            run(LLM(data_dir()), data_dir() / "muninn.db", block=False)
         if args.watch:
             from .watch import Watcher
 
             watcher = Watcher(LLM(data_dir()), open_store(), args.watch, log=lambda m: print(f"[watch] {m}", flush=True))
-            threading.Thread(target=watcher.run, name="bruh-watch", daemon=True).start()
-        print(f"Bruh is running at http://127.0.0.1:{args.port}")
+            threading.Thread(target=watcher.run, name="muninn-watch", daemon=True).start()
+        print(f"Muninn is running at http://127.0.0.1:{args.port}")
         uvicorn.run(create_app(open_store(), LLM(data_dir())), host="127.0.0.1", port=args.port, log_level="warning")
     elif args.command == "slack":
         from .slack import run
 
-        run(LLM(data_dir()), data_dir() / "bruh.db")
+        run(LLM(data_dir()), data_dir() / "muninn.db")
     elif args.command == "watch":
         from .watch import Watcher
 

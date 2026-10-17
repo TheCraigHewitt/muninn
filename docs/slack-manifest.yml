@@ -1,25 +1,25 @@
 # Paste this into https://api.slack.com/apps → Create New App → From a manifest. See docs/SLACK.md.
 display_information:
-  name: Bruh
+  name: Muninn
   description: Remembers what your team decided, why, and who's on the hook. With receipts.
   background_color: "#1c1b1a"
 features:
   bot_user:
-    display_name: bruh
+    display_name: muninn
     always_online: true
   slash_commands:
-    - command: /bruh
-      description: Ask Bruh privately. Only you see the answer.
+    - command: /muninn
+      description: Ask Muninn privately. Only you see the answer.
       usage_hint: what did we decide about pricing?
       should_escape: false
 oauth_config:
   scopes:
     bot:
-      - app_mentions:read  # hear @bruh
-      - channels:history   # read public channels Bruh is invited to
+      - app_mentions:read  # hear @muninn
+      - channels:history   # read public channels Muninn is invited to
       - channels:read      # check a channel is public and not shared outside the company
       - chat:write         # answer
-      - commands           # /bruh
+      - commands           # /muninn
       - reactions:read     # a 👍 counts as agreeing
       - users:read         # put names to messages
 settings:
